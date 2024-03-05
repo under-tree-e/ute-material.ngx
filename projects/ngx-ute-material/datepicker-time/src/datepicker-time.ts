@@ -144,6 +144,8 @@ export class UteDatepickerTime implements OnInit {
 
         // Create subscriber to detect when matDatepicker will be opened
         this.matDatepicker.openedStream.subscribe(() => {
+            this.initPicker(this.matDatepicker.datepickerInput._model.selection);
+
             // Create subscriber to detect when matCalendar value will be changed
             changeSub = this.matDatepicker._componentRef.changeDetectorRef.context._model.selectionChanged.subscribe(() => {
                 this.setDate();
@@ -158,13 +160,15 @@ export class UteDatepickerTime implements OnInit {
             // Create subscriber to detect when matDatepickerInput will be changed
             this.matDatepicker.datepickerInput.dateInput.subscribe(() => {
                 let date: Date = this.matDatepicker.datepickerInput.value;
-                if (date.getTime() < this.matDatepicker.datepickerInput.min.getTime()) {
-                    this.matDatepicker.datepickerInput.value = new Date(this.matDatepicker.datepickerInput.min);
-                    this.onToday(new Date(this.matDatepicker.datepickerInput.min));
-                } else if (date.getTime() > this.matDatepicker.datepickerInput.max.getTime()) {
-                    this.matDatepicker.datepickerInput.value = new Date(this.matDatepicker.datepickerInput.max);
-                    this.onToday(new Date(this.matDatepicker.datepickerInput.max));
-                }
+                try {
+                    if (date.getTime() < this.matDatepicker.datepickerInput.min.getTime()) {
+                        this.matDatepicker.datepickerInput.value = new Date(this.matDatepicker.datepickerInput.min);
+                        this.onToday(new Date(this.matDatepicker.datepickerInput.min));
+                    } else if (date.getTime() > this.matDatepicker.datepickerInput.max.getTime()) {
+                        this.matDatepicker.datepickerInput.value = new Date(this.matDatepicker.datepickerInput.max);
+                        this.onToday(new Date(this.matDatepicker.datepickerInput.max));
+                    }
+                } catch {}
             });
 
             setTimeout(() => {
@@ -190,16 +194,7 @@ export class UteDatepickerTime implements OnInit {
         if (this.matDatepicker.datepickerInput.value) {
             this.matDatepicker.datepickerInput.value = this.matDatepicker.datepickerInput._model.selection;
 
-            let hours: number = this.matDatepicker.datepickerInput.value.getHours();
-            hours = this.hourFormat === 12 ? ((hours + 11) % 12) + 1 : hours;
-            let minutes: number = this.matDatepicker.datepickerInput.value.getMinutes();
-            let seconds: number = this.matDatepicker.datepickerInput.value.getSeconds();
-            this.selectedIndex = {
-                hours: this.hourStep > 1 ? this.hourValues.map((vl: string) => parseInt(vl)).indexOf(Math.floor(hours / this.hourStep) * this.hourStep) : hours,
-                minutes: this.minuteStep > 1 ? this.minuteValues.map((vl: string) => parseInt(vl)).indexOf(Math.floor(minutes / this.minuteStep) * this.minuteStep) : minutes,
-                seconds: this.secondStep > 1 ? this.secondValues.map((vl: string) => parseInt(vl)).indexOf(Math.floor(seconds / this.secondStep) * this.secondStep) : seconds,
-                period: this.matDatepicker.datepickerInput.value.getHours() >= 12 ? PeriodIndex.PM : PeriodIndex.AM,
-            };
+            this.initPicker(this.matDatepicker.datepickerInput.value);
         }
 
         // Add or replace actions with UteDatepickerTime
@@ -352,15 +347,7 @@ export class UteDatepickerTime implements OnInit {
     public onToday(custom?: Date) {
         let newDate = custom ? custom : new Date();
 
-        let hours: number = new Date().getHours();
-        let minutes: number = new Date().getMinutes();
-        let seconds: number = new Date().getSeconds();
-        this.selectedIndex = {
-            hours: this.hourFormat === 12 ? ((hours + 11) % 12) + 1 : hours,
-            minutes: this.minuteStep > 1 ? this.minuteValues.map((vl: string) => parseInt(vl)).indexOf(Math.floor(minutes / this.minuteStep) * this.minuteStep) : minutes,
-            seconds: this.secondStep > 1 ? this.secondValues.map((vl: string) => parseInt(vl)).indexOf(Math.floor(seconds / this.secondStep) * this.secondStep) : seconds,
-            period: this.matDatepicker.datepickerInput.value.getHours() >= 12 ? PeriodIndex.PM : PeriodIndex.AM,
-        };
+        this.initPicker(newDate);
 
         if (!custom) this.setDate(newDate);
     }
@@ -399,5 +386,22 @@ export class UteDatepickerTime implements OnInit {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Change values on time pickers
+     * @param date - income date
+     */
+    private initPicker(date: Date) {
+        let hours: number = date.getHours();
+        hours = this.hourFormat === 12 ? ((hours + 11) % 12) + 1 : hours;
+        let minutes: number = date.getMinutes();
+        let seconds: number = date.getSeconds();
+        this.selectedIndex = {
+            hours: this.hourStep > 1 ? this.hourValues.map((vl: string) => parseInt(vl)).indexOf(Math.floor(hours / this.hourStep) * this.hourStep) : hours,
+            minutes: this.minuteStep > 1 ? this.minuteValues.map((vl: string) => parseInt(vl)).indexOf(Math.floor(minutes / this.minuteStep) * this.minuteStep) : minutes,
+            seconds: this.secondStep > 1 ? this.secondValues.map((vl: string) => parseInt(vl)).indexOf(Math.floor(seconds / this.secondStep) * this.secondStep) : seconds,
+            period: date.getHours() >= 12 ? PeriodIndex.PM : PeriodIndex.AM,
+        };
     }
 }
