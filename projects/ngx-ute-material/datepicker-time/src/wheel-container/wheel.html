@@ -1,0 +1,21 @@
+<div
+    class="wheel-container"
+    [ngStyle]="{height: contH + 'px'}"
+    [ngClass]="{underline: underline}"
+    uteSwipe
+    [swipeOptions]="{allowPageScroll: 'vertical'}"
+    (swipe)="onSwipe($event)"
+    (wheel)="onWheel($event)"
+>
+    <ul #wheel class="wheel" [ngStyle]="{top: blockH + 'px'}">
+        <ng-container *ngFor="let value of array; let i = index">
+            <li
+                class="wheel-item"
+                [ngClass]="{block: getDisabled(i)}"
+                [style]="{'transform': itemStyles[i]?.transform || 'none', 'transition-duration': itemStyles[i]?.duration || '0s', 'opacity': itemStyles[i]?.opacity || 0, 'font-size': itemStyles[i]?.fontSize || '1rem'}"
+            >
+                {{value}}
+            </li>
+        </ng-container>
+    </ul>
+</div>

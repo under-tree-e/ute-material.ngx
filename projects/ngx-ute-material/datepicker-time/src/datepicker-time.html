@@ -1,0 +1,87 @@
+<ng-template>
+    <div class="datepicker-time" [ngClass]="{view: view != 'month'}">
+        <ng-container *ngIf="timeStyle === 'wheel'">
+            <div class="time-container" [ngClass]="{outline: decoratorStyle === 'outline', diviner: showDiviner}">
+                <time-wheel
+                    [block]="hourBlocks"
+                    [array]="hourValues"
+                    [underline]="decoratorStyle === 'underline' ? true : false"
+                    [visibleItemsCount]="visibleItemsCount"
+                    [infiniteScroll]="infiniteScroll"
+                    [currentIndex]="selectedIndex.hours"
+                    (onChange)="onChange($event, timeType.hours)"
+                ></time-wheel>
+                <div class="diviner" *ngIf="showDiviner">:</div>
+                <time-wheel
+                    [block]="minuteBlocks"
+                    [array]="minuteValues"
+                    [underline]="decoratorStyle === 'underline' ? true : false"
+                    [visibleItemsCount]="visibleItemsCount"
+                    [infiniteScroll]="infiniteScroll"
+                    [currentIndex]="selectedIndex.minutes"
+                    (onChange)="onChange($event, timeType.minutes)"
+                ></time-wheel>
+                <div class="diviner" *ngIf="showDiviner && showSeconds">:</div>
+                <time-wheel
+                    *ngIf="showSeconds"
+                    [block]="secondBlocks"
+                    [array]="secondValues"
+                    [underline]="decoratorStyle === 'underline' ? true : false"
+                    [visibleItemsCount]="visibleItemsCount"
+                    [currentIndex]="selectedIndex.seconds"
+                    [infiniteScroll]="infiniteScroll"
+                    (onChange)="onChange($event, timeType.seconds)"
+                ></time-wheel>
+                <div class="diviner" *ngIf="showDiviner && hourFormat === 12">&nbsp;</div>
+                <time-wheel *ngIf="hourFormat === 12" [array]="dayPeriods" [infiniteScroll]="false" [currentIndex]="selectedIndex.period" (onChange)="onChange($event, timeType.period)"></time-wheel>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="timeStyle === 'button'">
+            <div class="time-container" [ngClass]="{outline: decoratorStyle === 'outline', diviner: showDiviner}">
+                <time-button
+                    [block]="hourBlocks"
+                    [array]="hourValues"
+                    [underline]="decoratorStyle === 'underline' ? true : false"
+                    [step]="hourStep"
+                    [infiniteScroll]="infiniteScroll"
+                    [currentIndex]="selectedIndex.hours"
+                    (onChange)="onChange($event, timeType.hours)"
+                ></time-button>
+                <div class="diviner" *ngIf="showDiviner">:</div>
+                <time-button
+                    [block]="minuteBlocks"
+                    [array]="minuteValues"
+                    [underline]="decoratorStyle === 'underline' ? true : false"
+                    [step]="minuteStep"
+                    [infiniteScroll]="infiniteScroll"
+                    [currentIndex]="selectedIndex.minutes"
+                    (onChange)="onChange($event, timeType.minutes)"
+                ></time-button>
+                <div class="diviner" *ngIf="showDiviner && showSeconds">:</div>
+                <time-button
+                    *ngIf="showSeconds"
+                    [block]="secondBlocks"
+                    [array]="secondValues"
+                    [underline]="decoratorStyle === 'underline' ? true : false"
+                    [step]="secondStep"
+                    [infiniteScroll]="infiniteScroll"
+                    [currentIndex]="selectedIndex.seconds"
+                    (onChange)="onChange($event, timeType.seconds)"
+                ></time-button>
+                <div class="diviner" *ngIf="showDiviner && hourFormat === 12">&nbsp;</div>
+                <time-button *ngIf="hourFormat === 12" [array]="dayPeriods" [infiniteScroll]="false" [currentIndex]="selectedIndex.period" (onChange)="onChange($event, timeType.period)"></time-button>
+            </div>
+        </ng-container>
+    </div>
+
+    <ng-container *ngIf="isActions">
+        <ng-template [cdkPortalOutlet]="_matDatepickerActions"></ng-template>
+    </ng-container>
+    <ng-container *ngIf="!isActions">
+        <div class="ute-datepicker-actions">
+            <button mat-button *ngIf="showToday" (click)="onToday()"><mat-icon *ngIf="showIcon">today</mat-icon>{{locale['today']}}</button>
+            <button mat-button (click)="onClose()"><mat-icon *ngIf="showIcon">close</mat-icon>{{locale['cancel']}}</button>
+            <button mat-raised-button color="primary" (click)="onApply()"><mat-icon *ngIf="showIcon">done</mat-icon>{{locale['apply']}}</button>
+        </div>
+    </ng-container>
+</ng-template>

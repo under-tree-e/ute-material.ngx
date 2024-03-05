@@ -1,0 +1,63 @@
+{
+  "name": "ngx-ute-material",
+  "version": "0.8.14-dev.11",
+  "description": "Ute material addon for Angular material library",
+  "scripts": {
+    "start": "ng serve",
+    "watch": "ng build --watch",
+    "build": "ng build",
+    "fix": "npm audit fix --force",
+    "update": "ncu --upgrade && npm i --force && npm run fix",
+    "printdoc": "typedoc",
+    "---": "",
+    "major-update": "npm version major --no-git-tag-version",
+    "minor-update": "npm version minor --no-git-tag-version",
+    "patch-update": "npm version patch --no-git-tag-version",
+    "dev-update": "npm version prerelease --preid=dev --no-git-tag-version && git add . && git commit -m 'dev_update_'$npm_package_version && git push --all"
+  },
+  "keywords": [
+    "angular",
+    "material",
+    "typescript",
+    "es5",
+    "datepicker-time",
+    "datetime",
+    "timepicker"
+  ],
+  "author": {
+    "name": "Under Tree Entertainment",
+    "url": "https://under-tree-e.com"
+  },
+  "private": false,
+  "dependencies": {
+    "@angular/common": "^17.2.1",
+    "@angular/compiler": "^17.2.1",
+    "@angular/core": "^17.2.1",
+    "@angular/material": "^17.2.0",
+    "@angular/platform-browser-dynamic": "^17.2.1",
+    "@angular/router": "^17.2.1",
+    "ngx-ute-material": "file:dist/ngx-ute-material",
+    "path-normalize": "^6.0.13",
+    "rxjs": "~7.8.1",
+    "tslib": "^2.6.2",
+    "zone.js": "~0.14.4"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^17.2.0",
+    "@angular/cli": "~17.2.0",
+    "@angular/compiler-cli": "^17.2.1",
+    "@types/hammerjs": "^2.0.45",
+    "@types/jasmine": "~5.1.4",
+    "@types/node": "^20.11.19",
+    "jasmine-core": "~5.1.2",
+    "karma": "~6.4.2",
+    "karma-chrome-launcher": "~3.2.0",
+    "karma-coverage": "~2.2.1",
+    "karma-jasmine": "~5.1.0",
+    "karma-jasmine-html-reporter": "~2.1.0",
+    "ng-packagr": "^17.2.0",
+    "npm-check-updates": "^16.14.15",
+    "typedoc": "^0.25.8",
+    "typescript": "~5.3.3"
+  }
+}

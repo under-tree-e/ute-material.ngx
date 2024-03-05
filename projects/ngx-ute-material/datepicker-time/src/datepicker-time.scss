@@ -1,0 +1,83 @@
+.datepicker-time {
+    border-top: 1px solid var(--mat-datepicker-calendar-header-divider-color);
+    box-sizing: border-box;
+    padding: 1rem;
+    margin-bottom: 0.25rem;
+    position: relative;
+    transition: all 0.2s ease-in-out;
+    max-height: 200px;
+    &.view {
+        overflow: hidden;
+        max-height: 0;
+        padding: 0;
+        border-width: 0;
+        opacity: 0;
+        margin-bottom: 0;
+    }
+    .time-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        width: fit-content;
+        margin: 0 auto;
+        padding: 0 0.75rem;
+        &.test {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        &.diviner {
+            gap: 0.25rem;
+        }
+        &.outline:after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 1.875rem;
+            width: 100%;
+            border: 1px solid var(--mat-datepicker-calendar-date-today-outline-color);
+            border-radius: 10px;
+            box-sizing: border-box;
+            pointer-events: none;
+            user-select: none;
+        }
+        .diviner {
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 1.875rem;
+            padding-bottom: 0.125rem;
+            box-sizing: border-box;
+        }
+    }
+    time-wheel * {
+        font-family: var(--mat-datepicker-calendar-text-font);
+    }
+}
+.ute-datepicker-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 8px 8px 8px;
+    gap: 8px;
+    button {
+        &:first-child {
+            margin-right: auto;
+        }
+    }
+}
+
+.mat-datepicker-dialog .mat-datepicker-content-touch .mat-datepicker-content-container {
+    max-height: 100%;
+}
+
+@media (orientation: portrait) {
+    .mat-datepicker-dialog .mat-datepicker-content-touch .mat-datepicker-content-container-with-actions {
+        height: auto;
+    }
+}
