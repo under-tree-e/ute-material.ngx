@@ -28,6 +28,15 @@
     "name": "Under Tree Entertainment",
     "url": "https://under-tree-e.com"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/under-tree-e/ute-material.ngx"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/under-tree-e/ute-material.ngx/issues"
+  },
+  "homepage": "https://github.com/under-tree-e/ute-material.ngx#readme",
   "private": false,
   "dependencies": {
     "@angular/common": "^17.2.3",
