@@ -52,7 +52,7 @@ export class TimeWheel implements OnChanges {
         this.contH = this.itemSize * this.visibleItemsCount;
         this.blockH = this.itemSize + this.itemSize;
 
-        this.items = Array.from(this.wheelElement.nativeElement.children);
+        this.items = Array(this.array.length).fill("");
 
         this.items.map((item: any, index: number) => {
             this.positionBase.push((index - this.currentIndex) * this.itemSize);
@@ -217,7 +217,9 @@ export class TimeWheel implements OnChanges {
         if (!this.itemStyles[index]) {
             this.itemStyles.push(values);
         } else {
-            this.itemStyles[index] = values;
+            if (values.transform != this.itemStyles[index].transform) {
+                this.itemStyles[index] = values;
+            }
         }
     }
 
