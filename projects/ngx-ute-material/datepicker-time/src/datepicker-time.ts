@@ -226,6 +226,8 @@ export class UteDatepickerTime implements OnInit {
     private mobileAdopt() {
         if (this.isMobile()) {
             this.timeStyle = this.mobileStyle;
+        } else {
+            this.timeStyle = this.desktopStyle;
         }
 
         if (this.dynamicTouchUI) {
