@@ -1,6 +1,5 @@
 import { CommonModule } from "@angular/common";
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
-import { MatIconModule } from "@angular/material/icon";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
@@ -8,7 +7,7 @@ import { MatButtonModule } from "@angular/material/button";
 @Component({
     selector: "time-button",
     standalone: true,
-    imports: [CommonModule, MatIconModule, MatFormFieldModule, MatInputModule, MatButtonModule],
+    imports: [CommonModule, MatFormFieldModule, MatInputModule, MatButtonModule],
     templateUrl: "button.html",
     styleUrls: ["button.scss"],
 })

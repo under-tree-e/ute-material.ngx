@@ -72,7 +72,7 @@ Add component to your html code near `mat-datepicker`:
 | decoratorStyle    |               string:<br>'outline' \| 'underline' \| 'none'               |   'outline'   | Adds decoration to the selected values on the pickers. `Outline` - creates a stroke around the selected values, including `AM/PM`. `Underline` - underlines numerical values, excluding `AM/PM`. |
 | showSeconds       |                                  boolean                                  |     true      | Adds a picker for seconds.                                                                                                                                                                       |
 | showToday         |                                  boolean                                  |     true      | Shows `Today` button in the bottom action bar.                                                                                                                                                   |
-| showIcon          |                                  boolean                                  |     true      | Displays icons on the buttons in the action bar below.                                                                                                                                           |
+| showIcon          |                                  boolean                                  |     true      | Displays icons on the buttons in the action bar. Required: `[Material Icon Link](https://developers.google.com/fonts/docs/material_icons#setup_method_1_using_via_google_fonts)`Linkbelow.       |
 | showDiviner       |                                  boolean                                  |     true      | Show two dots (`:`) between pickers.                                                                                                                                                             |
 | customButtons     | object:<br>{ today: "string"; cancel: "string"; apply: "string" } \| null |     null      | Allows you to insert your own text in the reference button on the action bar below, or hide the text by writing the value `''`                                                                   |
 | dynamicTouchUI    |                                  boolean                                  |     false     | Dynamically adds the `touchUi` to `mat-datepicker` parameter depending on the current device. Set (`false`) if you are modifying `touchUi`.                                                      |
@@ -83,6 +83,7 @@ Add component to your html code near `mat-datepicker`:
 -   The module supports changing the locale (used in `mat-datepicker-actions`) for the following languages:
     `en | ar | zh | cs | da | fr | de | it | ja | ko | pl | pt | ro | es | sv | uk`
 -   Available uses of `min` and `max` options from `mat-datepicker`. Will be displayed in `red` on the time pickers.
+-   If you want to use `showIcon` param - don't forget add `[Material Icon Link](https://developers.google.com/fonts/docs/material_icons#setup_method_1_using_via_google_fonts)` to `index.html`.
 
 ## Planned Improvements
 
