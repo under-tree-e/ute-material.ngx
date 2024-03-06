@@ -393,6 +393,8 @@ export class UteDatepickerTime implements OnInit {
      * @param date - income date
      */
     private initPicker(date: Date) {
+        if (!date) date = new Date();
+
         let hours: number = date.getHours();
         hours = this.hourFormat === 12 ? ((hours + 11) % 12) + 1 : hours;
         let minutes: number = date.getMinutes();
