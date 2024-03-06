@@ -19,14 +19,6 @@ enum TimeType {
 }
 
 /**
- * List of interface types
- */
-enum DisplayStyle {
-    wheel = "wheel",
-    button = "button",
-}
-
-/**
  * List of field values
  */
 interface TimeIndex {
@@ -59,8 +51,8 @@ enum PeriodIndex {
 })
 export class UteDatepickerTime implements OnInit {
     @Input("matDatepicker") public matDatepicker: any;
-    @Input() public desktopStyle: DisplayStyle = DisplayStyle.button;
-    @Input() public mobileStyle: DisplayStyle = DisplayStyle.wheel;
+    @Input() public desktopStyle: "button" | "wheel" = "button";
+    @Input() public mobileStyle: "button" | "wheel" = "wheel";
     @Input() public infiniteScroll: boolean = true;
     @Input() public visibleItemsCount: 1 | 3 | 5 = 5;
     @Input() public hourFormat: 24 | 12 = 24;
@@ -76,7 +68,7 @@ export class UteDatepickerTime implements OnInit {
     @Input() public dynamicTouchUI: boolean = false;
     @ViewChild(TemplateRef) private _template: TemplateRef<unknown> = {} as TemplateRef<unknown>;
 
-    public timeStyle: DisplayStyle = this.desktopStyle;
+    public timeStyle: "button" | "wheel" = this.desktopStyle;
     public _matDatepickerActions: TemplatePortal | null = null;
     public isActions: boolean = false;
     public timeType = TimeType;
