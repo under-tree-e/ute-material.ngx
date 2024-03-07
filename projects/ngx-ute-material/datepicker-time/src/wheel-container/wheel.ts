@@ -27,7 +27,6 @@ export class TimeWheel implements OnChanges {
     @Input() public currentIndex: number = 0;
     @Input() public infiniteScroll: boolean = true;
     @Output() public onChange: EventEmitter<number> = new EventEmitter<number>();
-    @ViewChild("wheel", { static: true }) private wheelElement: ElementRef = {} as ElementRef;
 
     public contH: number = 0;
     public blockH: number = 0;
@@ -42,6 +41,7 @@ export class TimeWheel implements OnChanges {
     private items: any[] = [];
     private itemsDuration: string[] = [];
     private itemsTranslate: string[] = [];
+    private scrollClose: any = null;
 
     constructor(private ngZone: NgZone) {}
 
@@ -52,7 +52,7 @@ export class TimeWheel implements OnChanges {
         this.contH = this.itemSize * this.visibleItemsCount;
         this.blockH = this.itemSize + this.itemSize;
 
-        this.items = Array.from(this.wheelElement.nativeElement.children);
+        this.items = Array(this.array.length).fill("");
 
         this.items.map((item: any, index: number) => {
             this.positionBase.push((index - this.currentIndex) * this.itemSize);
@@ -117,6 +117,16 @@ export class TimeWheel implements OnChanges {
             }
             this.onScroll(this.itemSize * -1, this.speed, true);
         }
+        clearInterval(this.scrollClose);
+        this.scrollClose = null;
+        this.scrollClose = setTimeout(() => {
+            clearInterval(this.scrollClose);
+            this.scrollClose = null;
+
+            this.closeIndex();
+            this.onChange.emit(this.currentIndex);
+            this.positionClose = [...this.positionChange];
+        }, 500);
     }
 
     /**
@@ -126,6 +136,8 @@ export class TimeWheel implements OnChanges {
      * @param close - Update finish data
      */
     private onScroll(distance: number, duration: number, close: boolean = false) {
+        this.closeIndex();
+
         this.ngZone.run(() => {
             let value: number = parseInt((distance < 0 ? "" : "-") + Math.abs(distance).toString());
 
@@ -173,12 +185,22 @@ export class TimeWheel implements OnChanges {
     private onClose() {
         this.positionClose = [...this.positionChange];
 
-        let closestValue = this.positionChange.reduce((prev: number, curr: number) => {
-            return Math.abs(curr) < Math.abs(prev) ? curr : prev;
-        });
-        this.currentIndex = this.positionChange.map((item: number) => item).indexOf(closestValue);
+        this.closeIndex();
 
         this.onScroll(this.positionChange[this.currentIndex], this.speed, true);
+    }
+
+    /**
+     * Get Closest index
+     */
+    private closeIndex() {
+        if (this.positionChange.length) {
+            let closestValue = this.positionChange.reduce((prev: number, curr: number) => {
+                return Math.abs(curr) < Math.abs(prev) ? curr : prev;
+            });
+            let closeIndex: number = this.positionChange.map((item: number) => item).indexOf(closestValue);
+            if (closeIndex != this.currentIndex) this.currentIndex = closeIndex;
+        }
     }
 
     /**
@@ -186,10 +208,59 @@ export class TimeWheel implements OnChanges {
      * @param index - Index of item from list
      */
     public genStyle(index: number): any {
-        let opacity: { min: number; val: number; max: number } = { min: 0, val: 0, max: 1 };
-        let fontSize: { min: number; val: number; max: number } = { min: 0.75, val: 0, max: 1.25 };
+        let end: number = Math.round(this.visibleItemsCount / 2) + this.currentIndex;
+        let start: number = this.currentIndex - Math.ceil(this.visibleItemsCount / 2);
+        let range: number[] = Array.from({ length: end - start + 1 }, (_, i) => start + i);
 
-        if (this.itemsTranslate[index]) {
+        let endBig: number = 6 + this.currentIndex;
+        let startBig: number = this.currentIndex - 6;
+        let rangeBig: number[] = Array.from({ length: endBig - startBig + 1 }, (_, i) => startBig + i);
+
+        const adjustArray = (numbersArray: number[], minAllowedValue: number, maxAllowedValue: number) => {
+            const resultArray = numbersArray.map((num) => {
+                const adjustedNum = num + minAllowedValue;
+                if (adjustedNum > maxAllowedValue) {
+                    return adjustedNum - (maxAllowedValue + 1);
+                } else if (adjustedNum < minAllowedValue) {
+                    return adjustedNum + (maxAllowedValue + 1);
+                } else {
+                    return adjustedNum;
+                }
+            });
+
+            return resultArray;
+        };
+        range = adjustArray(range, 0, this.items.length - 1);
+
+        const findSide = (numbersArray: number[], currentNumber: number, searchNumber: number) => {
+            const currentIndex = numbersArray.indexOf(currentNumber);
+            const searchIndex = numbersArray.indexOf(searchNumber);
+
+            if (currentIndex === -1 || searchIndex === -1) {
+                return 1;
+            }
+
+            const arrayLength = numbersArray.length;
+
+            const rotatedCurrentIndex = (currentIndex + arrayLength) % arrayLength;
+            const rotatedSearchIndex = (searchIndex + arrayLength) % arrayLength;
+
+            if (rotatedSearchIndex < rotatedCurrentIndex) {
+                return -1;
+            } else if (rotatedSearchIndex > rotatedCurrentIndex) {
+                return 1;
+            } else {
+                return 1;
+            }
+        };
+
+        let display: boolean = range.some((r) => r === index);
+        let displaySide: number = findSide(rangeBig, this.currentIndex, index);
+
+        let opacity: { min: number; val: number; max: number } = { min: 0, val: 0, max: 1 };
+        let fontSize: { min: number; val: number; max: number } = { min: 0.75, val: 0.75, max: 1.25 };
+
+        if (this.itemsTranslate[index] && display) {
             let pose: number = parseInt(this.itemsTranslate[index].split("(")[1].split("px")[0]);
             if (pose < 0) +pose * -1;
 
@@ -207,17 +278,34 @@ export class TimeWheel implements OnChanges {
             }
         }
 
-        let values: ItemStyles = {
-            duration: this.itemsDuration[index],
-            transform: this.itemsTranslate[index],
-            opacity: +opacity.val.toFixed(2),
-            fontSize: +fontSize.val.toFixed(2) + "em",
-        };
+        if (display) {
+            let values: ItemStyles = {
+                duration: this.itemsDuration[index],
+                transform: this.itemsTranslate[index],
+                opacity: +opacity.val.toFixed(2),
+                fontSize: +fontSize.val.toFixed(2) + "em",
+            };
 
-        if (!this.itemStyles[index]) {
-            this.itemStyles.push(values);
+            if (!this.itemStyles[index]) {
+                this.itemStyles.push(values);
+            } else {
+                this.itemStyles[index] = values;
+            }
         } else {
-            this.itemStyles[index] = values;
+            let values: ItemStyles = {
+                duration: "0s",
+                transform: `translateY(${displaySide * this.itemSize * 3}px)`,
+                opacity: opacity.min,
+                fontSize: `${fontSize.min}em`,
+            };
+
+            if (!this.itemStyles[index]) {
+                this.itemStyles.push(values);
+            } else {
+                if (values.transform != this.itemStyles[index].transform) {
+                    this.itemStyles[index] = values;
+                }
+            }
         }
     }
 
