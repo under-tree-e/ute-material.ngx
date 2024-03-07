@@ -7,13 +7,12 @@
     (swipe)="onSwipe($event)"
     (wheel)="onWheel($event)"
 >
-    <ul #wheel class="wheel" [ngStyle]="{top: blockH + 'px'}">
+    <ul class="wheel" [ngStyle]="{top: blockH + 'px'}">
         <ng-container *ngFor="let value of array; let i = index">
             <li
-                *ngIf="(itemStyles[i] ? itemStyles[i].opacity : 0) > 0"
                 class="wheel-item"
                 [ngClass]="{block: getDisabled(i)}"
-                [style]="{'transform': itemStyles[i]?.transform || 'none', 'transition-duration': itemStyles[i]?.duration || '0s', 'opacity': itemStyles[i]?.opacity || 0, 'font-size': itemStyles[i]?.fontSize || '1rem'}"
+                [style]="{'transform': itemStyles[i]?.transform || 'none', 'transition-duration': itemStyles[i]?.duration || '0s', 'font-size': itemStyles[i]?.fontSize || '1rem', 'opacity': itemStyles[i]?.opacity || 0}"
             >
                 {{value}}
             </li>
