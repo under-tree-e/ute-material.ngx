@@ -102,10 +102,6 @@ export class UteDatepickerTime implements OnInit {
         this.mobileAdopt();
         this.setLocale();
 
-        if (this.matDatepicker.datepickerInput.value._isAMomentObject) {
-            this.isMoment = true;
-        }
-
         const isPeriod: boolean = this.hourFormat === 12 ? true : false;
         for (let i = isPeriod ? 1 : 0; i <= this.hourFormat - (isPeriod ? 0 : 1); i++) {
             this.hourValues.push(i < 10 && !isPeriod ? `0${i}` : `${i}`);
@@ -130,6 +126,10 @@ export class UteDatepickerTime implements OnInit {
      */
     ngAfterViewInit() {
         this.view = this.matDatepicker.startView;
+
+        if (this.matDatepicker.datepickerInput._dateAdapter.useUtcForDisplay === undefined) {
+            this.isMoment = true;
+        }
 
         // Create subscriber to detect when locale will be updated
         this.matDatepicker._dateAdapter.localeChanges.subscribe(() => {
@@ -406,7 +406,7 @@ export class UteDatepickerTime implements OnInit {
     private initPicker(date: Date) {
         if (!date) {
             date = new Date();
-        } else if (date && this.isMoment) {
+        } else if (date && (date as any)._d) {
             date = (date as any)._d;
         }
 
