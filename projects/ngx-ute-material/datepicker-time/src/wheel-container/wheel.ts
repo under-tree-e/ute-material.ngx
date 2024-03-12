@@ -70,7 +70,9 @@ export class TimeWheel implements OnChanges {
      */
     ngOnChanges(changes: SimpleChanges) {
         if (changes && Object.keys(changes).some((change: any) => change === "currentIndex")) {
-            this.onScroll(this.positionChange[this.currentIndex], this.speed, true);
+            this.onScroll(this.positionChange[this.currentIndex], 0, true);
+            this.closeIndex();
+            this.onScroll(this.positionChange[this.currentIndex], 0, true);
         }
     }
 

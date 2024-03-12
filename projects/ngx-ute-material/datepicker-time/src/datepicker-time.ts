@@ -91,6 +91,7 @@ export class UteDatepickerTime implements OnInit {
     private _portal: TemplatePortal = null!;
     private locales: any = DatepickerTimeLocale;
     private isOpen: boolean = false;
+    private isMoment: boolean = false;
 
     constructor(private _viewContainerRef: ViewContainerRef, private changeDetectorRef: ChangeDetectorRef) {}
 
@@ -125,6 +126,10 @@ export class UteDatepickerTime implements OnInit {
      */
     ngAfterViewInit() {
         this.view = this.matDatepicker.startView;
+
+        if (this.matDatepicker.datepickerInput._dateAdapter.useUtcForDisplay === undefined) {
+            this.isMoment = true;
+        }
 
         // Create subscriber to detect when locale will be updated
         this.matDatepicker._dateAdapter.localeChanges.subscribe(() => {
@@ -177,11 +182,13 @@ export class UteDatepickerTime implements OnInit {
             viewSub.unsubscribe();
         });
 
-        let dateInput: any = { year: "numeric", month: "numeric", day: "numeric", hour12: this.hourFormat === 12 ? true : false, hour: "2-digit", minute: "2-digit" };
-        if (this.showSeconds) dateInput.second = "2-digit";
+        if (!this.isMoment) {
+            let dateInput: any = { year: "numeric", month: "numeric", day: "numeric", hour12: this.hourFormat === 12 ? true : false, hour: "2-digit", minute: "2-digit" };
+            if (this.showSeconds) dateInput.second = "2-digit";
 
-        this.matDatepicker.datepickerInput._dateFormats.parse.dateInput = dateInput;
-        this.matDatepicker.datepickerInput._dateFormats.display.dateInput = dateInput;
+            this.matDatepicker.datepickerInput._dateFormats.parse.dateInput = dateInput;
+            this.matDatepicker.datepickerInput._dateFormats.display.dateInput = dateInput;
+        }
 
         if (this.matDatepicker.datepickerInput.value) {
             this.matDatepicker.datepickerInput.value = this.matDatepicker.datepickerInput._model.selection;
@@ -258,6 +265,9 @@ export class UteDatepickerTime implements OnInit {
     private setDate(newDate?: Date) {
         try {
             let date: Date = this.matDatepicker._componentRef.changeDetectorRef.context._model.selection;
+            if (this.isMoment) {
+                date = (date as any)._d;
+            }
 
             if (newDate) {
                 this.matDatepicker._componentRef.changeDetectorRef.context._model.selection = newDate;
@@ -268,7 +278,12 @@ export class UteDatepickerTime implements OnInit {
                 let seconds: number = parseInt(this.secondValues[this.selectedIndex[TimeType.seconds]]) || 0;
 
                 date.setHours(hours, minutes, seconds);
-                this.matDatepicker._componentRef.changeDetectorRef.context._model.selection = date;
+
+                if (this.isMoment) {
+                    this.matDatepicker._componentRef.changeDetectorRef.context._model.selection._d = date;
+                } else {
+                    this.matDatepicker._componentRef.changeDetectorRef.context._model.selection = date;
+                }
             }
 
             this.blockCheck(TimeType.hours, this.matDatepicker._componentRef.changeDetectorRef.context._model.selection);
@@ -281,6 +296,8 @@ export class UteDatepickerTime implements OnInit {
      * @param date - Current date
      */
     private blockCheck(type: TimeType, date: Date) {
+        if (this.isMoment) date = (date as any)._d;
+
         let min: Date = new Date(this.matDatepicker.datepickerInput.min);
         let max: Date = new Date(this.matDatepicker.datepickerInput.max);
 
@@ -387,7 +404,11 @@ export class UteDatepickerTime implements OnInit {
      * @param date - income date
      */
     private initPicker(date: Date) {
-        if (!date) date = new Date();
+        if (!date) {
+            date = new Date();
+        } else if (date && (date as any)._d) {
+            date = (date as any)._d;
+        }
 
         let hours: number = date.getHours();
         hours = this.hourFormat === 12 ? ((hours + 11) % 12) + 1 : hours;
