@@ -127,9 +127,7 @@ export class UteDatepickerTime implements OnInit {
     ngAfterViewInit() {
         this.view = this.matDatepicker.startView;
 
-        if (this.matDatepicker.datepickerInput._dateAdapter.useUtcForDisplay === undefined) {
-            this.isMoment = true;
-        }
+        this.isMoment = this.matDatepicker.datepickerInput._dateAdapter.useUtcForDisplay === undefined ? true : false;
 
         // Create subscriber to detect when locale will be updated
         this.matDatepicker._dateAdapter.localeChanges.subscribe(() => {
@@ -181,8 +179,9 @@ export class UteDatepickerTime implements OnInit {
             changeSub.unsubscribe();
             viewSub.unsubscribe();
         });
+        console.log(this.matDatepicker.datepickerInput._dateFormats.parse.dateInput);
 
-        if (!this.isMoment) {
+        if (!this.isMoment && this.matDatepicker.datepickerInput._dateFormats.parse.dateInput != "input") {
             let dateInput: any = { year: "numeric", month: "numeric", day: "numeric", hour12: this.hourFormat === 12 ? true : false, hour: "2-digit", minute: "2-digit" };
             if (this.showSeconds) dateInput.second = "2-digit";
 
