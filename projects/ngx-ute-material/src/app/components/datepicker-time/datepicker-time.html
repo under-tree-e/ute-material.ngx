@@ -1,0 +1,76 @@
+<h1>Material Datepicker Time</h1>
+
+<h2>default</h2>
+<mat-form-field>
+    <mat-label>Choose a datetime</mat-label>
+    <!-- <input matInput [matDatepicker]="picker" (dateChange)="dateChange($event)" [value]="initDate" [min]="minDate" [max]="maxDate" [matDatepickerFilter]="filter" /> -->
+    <input matInput [matDatepicker]="picker" (dateChange)="dateChange($event)" [value]="initDate" />
+    <!-- <input matInput [matDatepicker]="picker" (dateChange)="dateChange($event)" [(ngModel)]="initDate" /> -->
+    <mat-hint>MM/DD/YYYY, HH:mm:ss</mat-hint>
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker>
+        <!-- <mat-datepicker-actions>
+            <button mat-button matDatepickerCancel>Cancel</button>
+            <button mat-raised-button color="primary" matDatepickerApply>Apply</button>
+        </mat-datepicker-actions> -->
+    </mat-datepicker>
+    <ute-datepicker-time [matDatepicker]="picker" [desktopStyle]="'wheel'"></ute-datepicker-time>
+    <!-- [decoratorStyle]="'underline'" -->
+    <!-- [showIcon]="true" -->
+    <!-- [dynamicTouchUI]="true"   -->
+    <!-- [infiniteScroll]="false" -->
+    <!-- [hourFormat]="12" -->
+    <!-- [hourStep]="4" -->
+    <!-- [visibleItemsCount]="3" -->
+</mat-form-field>
+
+<br />
+<br />
+<br />
+
+<h2>day + format</h2>
+<mat-form-field>
+    <mat-label>Choose a datetime</mat-label>
+    <input matInput [matDatepicker]="pickerDublicate" (dateChange)="dateChange($event)" [value]="initDate" />
+    <!-- <input matInput [matDatepicker]="pickerDublicate" (dateChange)="dateChange($event)" /> -->
+    <mat-hint>MM/DD/YYYY, HH:mm:ss</mat-hint>
+    <mat-datepicker-toggle matIconSuffix [for]="pickerDublicate"></mat-datepicker-toggle>
+    <mat-datepicker #pickerDublicate uteDateSettings [weekStart]="1" [format]="'MM.dd.YYYY'" [weekdaysSymbols]="3"></mat-datepicker>
+    <ute-datepicker-time [matDatepicker]="pickerDublicate" [desktopStyle]="'wheel'"></ute-datepicker-time>
+</mat-form-field>
+
+<br />
+<br />
+<br />
+
+<h2>day + default</h2>
+<mat-form-field>
+    <mat-label>Choose a datetime</mat-label>
+    <input matInput [matDatepicker]="pickerDublicate2" (dateChange)="dateChange($event)" [value]="initDate" />
+    <!-- <input matInput [matDatepicker]="pickerDublicate2" (dateChange)="dateChange($event)" /> -->
+    <mat-hint>MM/DD/YYYY, HH:mm:ss</mat-hint>
+    <mat-datepicker-toggle matIconSuffix [for]="pickerDublicate2"></mat-datepicker-toggle>
+    <mat-datepicker #pickerDublicate2 uteDateSettings [weekStart]="0" [overlayClass]="'test1'" [contentClass]="'test2'" [backdropClass]="'test3'" [weekdaysSymbols]="2"></mat-datepicker>
+    <ute-datepicker-time [matDatepicker]="pickerDublicate2"></ute-datepicker-time>
+</mat-form-field>
+
+<br />
+<br />
+<br />
+
+<!-- <mat-form-field>
+    <mat-label>Choose a datetime</mat-label>
+    <mat-date-range-input [rangePicker]="pickerRange" (dateChange)="dateChange($event)">
+        <input matStartDate [value]="startDate" />
+        <input matEndDate [value]="endDate" />
+    </mat-date-range-input>
+    <mat-hint>MM/DD/YYYY, HH:mm:ss</mat-hint>
+    <mat-datepicker-toggle matIconSuffix [for]="pickerRange"></mat-datepicker-toggle>
+    <mat-date-range-picker #pickerRange>
+        <mat-datepicker-actions>
+            <button mat-button matDatepickerCancel>Cancel</button>
+            <button mat-raised-button color="primary" matDatepickerApply>Apply</button>
+        </mat-datepicker-actions>
+    </mat-date-range-picker>
+    <ute-datepicker-time [matDatepicker]="pickerRange" [hourFormat]="24" [visibleItemsCount]="5" [showSeconds]="true" [minuteStep]="1"></ute-datepicker-time>
+</mat-form-field> -->
