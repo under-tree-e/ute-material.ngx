@@ -1,0 +1,19 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../out-tsc/app",
+    "paths": {
+      "ngx-ute-material/datepicker-settings": [
+        "../projects/ngx-ute-material/datepicker-settings/src/public-api"
+      ],
+      "ngx-ute-material/datepicker-time": [
+        "../projects/ngx-ute-material/datepicker-time/src/public-api"
+      ],
+    },
+    "types": []
+  },
+  "files": [
+    "main.ts",
+    "polyfills.ts"
+  ]
+}
