@@ -6,7 +6,7 @@
         </div>
         <div class="docs-header-start">
             <a mat-raised-button class="docs-button" routerLink="/pages/getting-started">Get started</a>
-            <a mat-raised-button class="docs-button" routerLink="/components">Components</a>
+            <a mat-raised-button class="docs-button" color="accent" routerLink="/components">Components</a>
         </div>
     </div>
 </header>
@@ -29,43 +29,6 @@
             <p>Advanced settings allow you to make the functionality exactly the way you need it.</p>
         </div>
     </div>
-
-    <!-- <mat-divider></mat-divider> -->
-
-    <!-- <div class="docs-homepage-featured-components docs-homepage-carousel-row">
-        <div class="docs-homepage-header">
-            <h2>Featured components</h2>
-
-            <a class="docs-link" routerLink="/components">
-                View all components
-                <mat-icon>chevron_right</mat-icon>
-            </a>
-        </div>
-        <app-carousel [aria-label]="'Featured components'">
-            <a *ngFor="let comp of getTopComponents(); let i = index" carousel-item class="carousel-item docs-featured-components-carousel-item" routerLink="/components/{{comp}}">
-                <div class="docs-homepage-img-container">
-                    <img alt="" src="assets/screenshots/{{comp}}.scene.png" role="presentation" />
-                </div>
-                {{(comp[0].toUpperCase() + comp.slice(1)).replace('-', ' ')}}{{i > 0 ? ' (dev)' : ''}}
-            </a>
-        </app-carousel>
-    </div> -->
-
-    <!-- <mat-divider></mat-divider> -->
-
-    <!-- <div class="docs-homepage-environment-support docs-homepage-carousel-row">
-        <div class="docs-homepage-header">
-            <h2>Environment Support</h2>
-        </div>
-        <app-carousel [aria-label]="'Environment Support'">
-            <div *ngFor="let sup of getSupports()" carousel-item class="carousel-item docs-environment-support-carousel-item">
-                <div class="docs-homepage-img-container">
-                    <img alt="" src="assets/screenshots/{{sup}}.scene.png" role="presentation" />
-                </div>
-                {{(sup[0].toUpperCase() + sup.slice(1)).replace('-', ' ')}}
-            </div>
-        </app-carousel>
-    </div> -->
 </main>
 
 <app-footer></app-footer>

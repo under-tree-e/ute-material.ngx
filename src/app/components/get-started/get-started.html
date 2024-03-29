@@ -1,0 +1,63 @@
+<header class="page__header slds-border_bottom slds-grid slds-wrap slds-m-bottom_medium">
+    <div class="slds-has-flexi-truncate slds-align-middle">
+        <h1>Get Started</h1>
+    </div>
+</header>
+<p>This is an open source project that builds Angular widgets following UX guidelines and using HTML/CSS of Salesforce's Lightning Design System.</p>
+<div>
+    <h2 class="callout">Installation</h2>
+    <div class="slds-text-heading_small slds-m-top_large slds-m-bottom_small">Step 1: Installing packages</div>
+    <p>You can use either the <span class="code">npm</span> or <span class="code">yarn</span> command-line tool to install packages.</p>
+    <pre class="language-clike" ngNonBindable="ngNonBindable"><code></code></pre>
+    <div class="slds-text-heading_small slds-m-top_xx-large slds-m-bottom_small">Step 2: Installing dependencies</div>
+    <p>
+        Some components rely on <a href="https://material.angular.io/cdk/">Angular CDK</a> to work correctly. If you don't already have <b><span class="code">@angular/cdk</span></b> as a dependency,
+        you should also install it to your application via <span class="code">npm</span> or <span class="code">yarn</span>.
+    </p>
+    <p>
+        If you are later going to use Salesforce's LDS SASS files or want to import their CSS from your <span class="code">node_modules</span> instead of CDN, you should also install
+        <b><span class="code">@salesforce-ux/design-system</span></b
+        >.
+    </p>
+    <div class="slds-text-heading_small slds-m-top_xx-large slds-m-bottom_small">Step 3: Adding styles</div>
+    <p>Including SLDS CSS files and a small set of structural styles of CDK, is required for your application to work correctly.</p>
+    <p>If you are using the Angular CLI, you need to add the following to the <span class="code">styles</span> array of your <span class="code">angular.json</span> file.</p>
+    <pre class="language-json" ngNonBindable="ngNonBindable"><code></code></pre>
+    <p>
+        If you are not using the CLI, you'll need to add the files listed above to your build tooling or you could also include them via <span class="code">&lt;link&gt;</span> elements in your
+        <span class="code">index.html</span>.
+    </p>
+    <div class="slds-text-heading_small slds-m-top_xx-large slds-m-bottom_small">Step 4 (optional): Setup SLDS icons</div>
+    <p>
+        If you want to use SLDS icons, you must provide a copy of the various sprite files (ie <span class="code">@salesforce-ux/design-system/assets/icons/*-sprite/svg/symbols.svg</span>), served
+        through your server. If you are using the Angular CLI, here is an example configuration for your <span class="code">assets</span> property:
+    </p>
+    <pre class="language-json"><code></code></pre>
+    <p>
+        Based on your needs you can change what will be copied from SLDS <span class="code">assets</span> folder, and also change the <span class="code">output</span> folder, but remember to configure
+        the <span class="code">svgPath</span> as described below.
+    </p>
+</div>
+<div>
+    <h2 class="callout">Reading the documentation</h2>
+    <p>
+        Each component has API documentation, examples, and a working demo. They can be found
+
+        <a routerLink="/components">here</a>.
+    </p>
+</div>
+<div>
+    <h2 class="callout">Usage</h2>
+    <p>Once installed you need to import our main module into your application module. You should end up with code similar to this:</p>
+    <pre class="language-typescript"><code></code></pre>
+    <p>
+        Alternatively you could only import (sub)modules with components you need. For example, if you only want to use the <span class="code">&lt;ngl-modal&gt;</span> component, you can import just
+        <span class="code">NglModalsModule</span> instead of <span class="code">NglModule</span>. The resulting bundle will be smaller in this case.
+    </p>
+</div>
+<div>
+    <h2 class="callout">Configuration</h2>
+    <p>Optionally, you can configure and provide your own default values, using the various injection tokens available.</p>
+    <pre class="language-typescript"><code></code></pre>
+    <p class="slds-m-top_medium">Currently available options are documented in the API section of each component on which are available.</p>
+</div>
