@@ -2,7 +2,7 @@
 
 @use "sass:map";
 // @use './app/pages/component-category-list/component-category-list-theme';
-// @use './app/pages/component-sidenav/component-sidenav-theme';
+@use "./app/pages/layout/layout-theme";
 // @use './app/pages/component-viewer/component-viewer-theme';
 // @use './app/pages/guide-list/guide-list-theme';
 @use "./app/pages/home/home-theme";
@@ -58,7 +58,7 @@
 
     // @include carousel-theme.theme($theme);
     // @include component-category-list-theme.theme($theme);
-    // @include component-sidenav-theme.theme($theme);
+    @include layout-theme.theme($theme);
     // @include component-viewer-theme.theme($theme);
     @include api-theme.theme($theme);
     @include markdown-theme.theme($theme);

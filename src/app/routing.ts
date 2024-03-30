@@ -6,21 +6,11 @@ export const AppRoutes: Routes = [
         pathMatch: "full",
         loadComponent: () => import("./pages/home").then((m) => m.HomePage),
     },
+    { path: "components", pathMatch: "full", redirectTo: "components/default" },
     {
         path: "components/:id",
         loadChildren: () => import("./pages/layout").then((m) => m.LayoutModule),
     },
-    // { path: "components", redirectTo: "/components/datepicker-time" },
-    // { path: "datepicker-time", redirectTo: "/components/datepicker-time" },
-    // { path: "datepicker-settings", redirectTo: "/components/datepicker-settings" },
-    // {
-    //     path: "components/datepicker-time",
-    //     loadComponent: () => import("./components/datepicker-time").then((m) => m.DatepickerTimeComponent),
-    // },
-    // {
-    //     path: "datepicker-settings",
-    //     loadComponent: () => import("./components/datepicker-settings").then((m) => m.DatepickerSettingsComponent),
-    // },
     {
         path: "404",
         loadComponent: () => import("./pages/not-found").then((m) => m.NotFound),

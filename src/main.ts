@@ -1,8 +1,8 @@
 import { AppComponent } from "./app/app";
 import { bootstrapApplication } from "@angular/platform-browser";
 import { LocationStrategy, PathLocationStrategy } from "@angular/common";
-import { provideHttpClient } from "@angular/common/http";
-import { provideRouter, withInMemoryScrolling } from "@angular/router";
+import { provideHttpClient, withFetch } from "@angular/common/http";
+import { provideRouter, withDebugTracing, withInMemoryScrolling } from "@angular/router";
 import { AppRoutes } from "./app/routing";
 import { provideAnimations, provideNoopAnimations } from "@angular/platform-browser/animations";
 
@@ -15,11 +15,12 @@ bootstrapApplication(AppComponent, {
 
         provideRouter(
             AppRoutes,
+            // withDebugTracing(),
             withInMemoryScrolling({
                 scrollPositionRestoration: "enabled",
                 anchorScrolling: "enabled",
             })
         ),
-        provideHttpClient(),
+        provideHttpClient(withFetch()),
     ],
 }).catch((err) => console.error(err));

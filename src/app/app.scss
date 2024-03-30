@@ -14,12 +14,12 @@ app-navbar {
     z-index: 2;
 }
 
-app-root > app-component-sidenav {
+app-root > app-layout {
     flex: 1;
 }
 
 app-root > router-outlet + .main-content,
-app-root > router-outlet + app-component-sidenav {
+app-root > router-outlet + app-layout {
     margin-top: 56px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;

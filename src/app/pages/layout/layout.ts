@@ -1,62 +1,32 @@
-import { Component, NgModule } from "@angular/core";
+import { Component, ViewChild, ViewEncapsulation } from "@angular/core";
 import { Footer } from "../../shared/footer/footer";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
-import { RouterModule, Routes } from "@angular/router";
+import { PageHeader } from "src/app/shared/page-header/page-header";
+import { SideBar } from "src/app/shared/sidebar/sidebar";
+import { RouterModule } from "@angular/router";
+import { MatSidenav, MatSidenavModule } from "@angular/material/sidenav";
+import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
+import { BreakpointObserver } from "@angular/cdk/layout";
+import { Observable, map } from "rxjs";
+import { _constants } from "src/app/_constants";
+import { MatTabsModule } from "@angular/material/tabs";
 
 @Component({
     selector: "app-layout",
     templateUrl: "./layout.html",
-    styleUrls: ["layout.scss"],
+    styleUrls: ["./layout.scss"],
+    encapsulation: ViewEncapsulation.None,
     standalone: true,
-    imports: [Footer, MatIconModule, MatButtonModule],
+    imports: [NgIf, Footer, MatIconModule, MatButtonModule, PageHeader, SideBar, RouterModule, MatSidenavModule, AsyncPipe, MatTabsModule, NgForOf],
 })
-export class Layout {}
+export class Layout {
+    public isScreenSmall: Observable<boolean>;
+    public sections: Set<string> = new Set(["overview", "example"]);
 
-const LayoutRoutes: Routes = [
-    {
-        path: "",
-        component: Layout,
-        children: [
-            //   {path: 'component/:id', redirectTo: ':id', pathMatch: 'full'},
-            //   {path: 'category/:id', redirectTo: '/categories/:id', pathMatch: 'full'},
-            //   {
-            //     path: 'categories',
-            //     children: [
-            //       {path: '', component: ComponentCategoryList},
-            //     ],
-            //   },
-            //   {
-            //     path: ':id',
-            //     component: ComponentViewer,
-            //     children: [
-            //       {path: '', redirectTo: 'overview', pathMatch: 'full'},
-            //       {path: 'overview', component: ComponentOverview, pathMatch: 'full'},
-            //       {path: 'api', component: ComponentApi, pathMatch: 'full'},
-            //       {path: 'examples', component: ComponentExamples, pathMatch: 'full'}
-            //     ],
-            //   },
-            { path: "**", redirectTo: "/404" },
-        ],
-    },
-];
+    @ViewChild(MatSidenav) sidenav!: MatSidenav;
 
-@NgModule({
-    imports: [
-        //   MatSidenavModule,
-        //   MatListModule,
-        RouterModule,
-        //   CommonModule,
-        //   ComponentCategoryListModule,
-        //   ComponentViewerModule,
-        //   DocViewerModule,
-        //   FormsModule,
-        //   HttpClientModule,
-        //   CdkAccordionModule,
-        //   MatIconModule,
-        RouterModule.forChild(LayoutRoutes),
-        Layout,
-    ],
-    exports: [Layout],
-})
-export class LayoutModule {}
+    constructor(private breakpoints: BreakpointObserver) {
+        this.isScreenSmall = breakpoints.observe(`(max-width: ${_constants["small-breakpoint-width"]}px)`).pipe(map((breakpoint) => breakpoint.matches));
+    }
+}
