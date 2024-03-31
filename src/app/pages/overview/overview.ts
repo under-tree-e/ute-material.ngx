@@ -1,6 +1,6 @@
 import { BreakpointObserver } from "@angular/cdk/layout";
 import { CommonModule, NgFor, NgIf, AsyncPipe } from "@angular/common";
-import { ChangeDetectorRef, Component, Directive, NgModule, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation } from "@angular/core";
+import { ChangeDetectorRef, Component, Directive, Input, NgModule, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation } from "@angular/core";
 import { MatTabsModule } from "@angular/material/tabs";
 import { ActivatedRoute, Params, Router, RouterModule, RouterLinkActive, RouterLink, RouterOutlet } from "@angular/router";
 import { combineLatest, Observable, ReplaySubject, Subject } from "rxjs";
@@ -132,6 +132,7 @@ import { map, skip, takeUntil } from "rxjs/operators";
 @Component({
     selector: "app-overview",
     templateUrl: "./overview.html",
+    styleUrls: ["./overview.scss"],
     encapsulation: ViewEncapsulation.None,
     standalone: true,
     imports: [
@@ -142,6 +143,7 @@ import { map, skip, takeUntil } from "rxjs/operators";
     ],
 })
 export class Overview {
+    @Input() public itemLink: string = "";
     constructor(
         // componentViewer: ComponentViewer,
         breakpointObserver: BreakpointObserver,

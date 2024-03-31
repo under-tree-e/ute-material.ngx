@@ -13,7 +13,7 @@ const PAGES: PageItem[] = [
     {
         id: "get-started",
         name: "Get Started",
-        path: "datepicker-time",
+        path: "get-started",
     },
 ];
 
@@ -36,8 +36,12 @@ export class PageManager {
         return page ? PAGES : COMPONENTS;
     }
 
-    public getItemById(id: string, page: boolean = false): PageItem | undefined {
-        return (page ? PAGES : COMPONENTS).find((item) => item.id === id);
+    public getItemById(id: string): PageItem | undefined {
+        let pageItem: PageItem | undefined = PAGES.find((item) => item.id === id);
+        if (!pageItem) {
+            pageItem = COMPONENTS.find((item) => item.id === id);
+        }
+        return pageItem;
     }
 
     public getDefault(page: boolean = false): string {

@@ -1,5 +1,5 @@
 import { AsyncPipe, NgFor, NgIf } from "@angular/common";
-import { Component } from "@angular/core";
+import { Component, EventEmitter, Output } from "@angular/core";
 import { MatListModule } from "@angular/material/list";
 import { RouterLink, RouterLinkActive } from "@angular/router";
 import { animate, state, style, transition, trigger } from "@angular/animations";
@@ -19,5 +19,7 @@ import { PageManager } from "../page-manager/page-manager";
     imports: [NgIf, MatListModule, NgFor, RouterLinkActive, RouterLink, AsyncPipe],
 })
 export class SideBar {
+    @Output() public toggleSidenav: EventEmitter<boolean> = new EventEmitter<boolean>();
+
     constructor(public pageManager: PageManager) {}
 }

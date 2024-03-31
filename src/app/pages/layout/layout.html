@@ -9,7 +9,7 @@
         [fixedInViewport]="(isScreenSmall | async)"
         [fixedTopGap]="56"
     >
-        <app-sidebar></app-sidebar>
+        <app-sidebar (toggleSidenav)="sidenav.toggle()"></app-sidebar>
     </mat-sidenav>
     <div class="docs-component-sidenav-content">
         <div class="docs-component-sidenav-inner-content">

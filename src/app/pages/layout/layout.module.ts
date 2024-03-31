@@ -13,6 +13,7 @@ const LayoutRoutes: Routes = [
             {
                 path: "overview",
                 pathMatch: "full",
+                // data: Layout.
                 loadComponent: () => import("../overview").then((m) => m.Overview),
             },
             {

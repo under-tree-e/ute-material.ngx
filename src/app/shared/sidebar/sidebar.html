@@ -5,8 +5,8 @@
                 mat-list-item
                 *ngFor="let page of pageManager.getItems(true)"
                 [routerLink]="'/components/' + page.id"
-                [disabled]="!page.id"
                 routerLinkActive="docs-component-viewer-sidenav-item-selected"
+                (click)="toggleSidenav.emit()"
             >
                 {{page.name}}
             </a>
@@ -15,8 +15,8 @@
                 mat-list-item
                 *ngFor="let component of pageManager.getItems()"
                 [routerLink]="'/components/' + component.id"
-                [disabled]="!component.id"
                 routerLinkActive="docs-component-viewer-sidenav-item-selected"
+                (click)="toggleSidenav.emit()"
             >
                 {{component.name}}
             </a>

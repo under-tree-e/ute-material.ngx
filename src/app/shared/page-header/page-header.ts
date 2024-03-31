@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { PageTitle } from "../page-title/page-title";
 
 import { MatButtonModule } from "@angular/material/button";
