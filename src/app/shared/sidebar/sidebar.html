@@ -1,16 +1,11 @@
 <div class="docs-component-viewer-nav">
     <div class="docs-component-viewer-nav-content">
         <mat-nav-list>
-            <a
-                mat-list-item
-                *ngFor="let page of pageManager.getItems(true)"
-                [routerLink]="'/components/' + page.id"
-                routerLinkActive="docs-component-viewer-sidenav-item-selected"
-                (click)="toggleSidenav.emit()"
-            >
+            <a mat-list-item *ngFor="let page of pageManager.getItems(true)" [routerLink]="'/' + page.id" routerLinkActive="docs-component-viewer-sidenav-item-selected" (click)="toggleSidenav.emit()">
                 {{page.name}}
             </a>
             <h3>Components</h3>
+            <!-- <div class="diviner"></div> -->
             <a
                 mat-list-item
                 *ngFor="let component of pageManager.getItems()"

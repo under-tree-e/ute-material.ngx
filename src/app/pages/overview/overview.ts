@@ -1,227 +1,117 @@
+import { ApplicationRef, ChangeDetectorRef, Component, ComponentFactoryResolver, ElementRef, Injector, OnInit, SecurityContext, ViewChild, ViewContainerRef, ViewEncapsulation } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
+import { DomSanitizer } from "@angular/platform-browser";
+import { DocFetcher } from "src/app/shared/doc-fetcher/doc-fetcher";
+import { PageItem } from "src/app/shared/page-manager/page-manager";
+import { AsyncPipe, NgIf } from "@angular/common";
+import { TableOfContents } from "src/app/shared/table-of-contents/table-of-contents";
+import { Observable, map } from "rxjs";
 import { BreakpointObserver } from "@angular/cdk/layout";
-import { CommonModule, NgFor, NgIf, AsyncPipe } from "@angular/common";
-import { ChangeDetectorRef, Component, Directive, Input, NgModule, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren, ViewEncapsulation } from "@angular/core";
-import { MatTabsModule } from "@angular/material/tabs";
-import { ActivatedRoute, Params, Router, RouterModule, RouterLinkActive, RouterLink, RouterOutlet } from "@angular/router";
-import { combineLatest, Observable, ReplaySubject, Subject } from "rxjs";
-import { map, skip, takeUntil } from "rxjs/operators";
-// import {DocViewerModule} from '../../shared/doc-viewer/doc-viewer-module';
-// import {DocItem, DocumentationItems} from '../../shared/documentation-items/documentation-items';
-// import {TableOfContents} from '../../shared/table-of-contents/table-of-contents';
-
-// import {ComponentPageTitle} from '../page-title/page-title';
-// import {NavigationFocus} from '../../shared/navigation-focus/navigation-focus';
-// import {DocViewer} from '../../shared/doc-viewer/doc-viewer';
-// import {ExampleViewer} from '../../shared/example-viewer/example-viewer';
-//
-
-// @Component({
-//   selector: 'app-component-viewer',
-//   templateUrl: './component-viewer.html',
-//   styleUrls: ['./component-viewer.scss'],
-//   encapsulation: ViewEncapsulation.None,
-//   standalone: true,
-//   imports: [
-//     MatTabsModule,
-//     NavigationFocus,
-//     NgFor,
-//     RouterLinkActive,
-//     RouterLink,
-//     RouterOutlet,
-//   ],
-// })
-// export class ComponentViewer implements OnDestroy {
-//   componentDocItem = new ReplaySubject<DocItem>(1);
-//   sections: Set<string> = new Set(['overview', 'api']);
-//   private _destroyed = new Subject();
-
-//   constructor(_route: ActivatedRoute, private router: Router,
-//               public _componentPageTitle: ComponentPageTitle,
-//               public docItems: DocumentationItems) {
-//     const routeAndParentParams = [_route.params];
-//     if (_route.parent) {
-//       routeAndParentParams.push(_route.parent.params);
-//     }
-//     // Listen to changes on the current route for the doc id (e.g. button/checkbox) and the
-//     // parent route for the section (material/cdk).
-//     combineLatest(routeAndParentParams).pipe(
-//       map((params: Params[]) => ({id: params[0]['id'], section: params[1]['section']})),
-//       map((docIdAndSection: {id: string, section: string}) =>
-//           ({doc: docItems.getItemById(docIdAndSection.id, docIdAndSection.section),
-//             section: docIdAndSection.section}), takeUntil(this._destroyed))
-//     ).subscribe((docItemAndSection: {doc: DocItem | undefined, section: string}) => {
-//       if (docItemAndSection.doc !== undefined) {
-//         this.componentDocItem.next(docItemAndSection.doc);
-//         this._componentPageTitle.title = `${docItemAndSection.doc.name}`;
-
-//         if (docItemAndSection.doc.examples && docItemAndSection.doc.examples.length) {
-//           this.sections.add('examples');
-//         } else {
-//           this.sections.delete('examples');
-//         }
-//       } else {
-//         this.router.navigate(['/' + docItemAndSection.section]);
-//       }
-//     });
-//   }
-
-//   ngOnDestroy(): void {
-//     this._destroyed.next();
-//     this._destroyed.complete();
-//   }
-// }
-
-// /**
-//  * Base component class for views displaying docs on a particular component (overview, API,
-//  * examples). Responsible for resetting the focus target on doc item changes and resetting
-//  * the table of contents headers.
-//  */
-// @Directive()
-// export class ComponentBaseView implements OnInit, OnDestroy {
-//   @ViewChild('toc') tableOfContents!: TableOfContents;
-//   @ViewChildren(DocViewer) viewers!: QueryList<DocViewer>;
-
-//   showToc: Observable<boolean>;
-//   private _destroyed = new Subject();
-
-//   constructor(
-//     public componentViewer: ComponentViewer,
-//     breakpointObserver: BreakpointObserver,
-//     private changeDetectorRef: ChangeDetectorRef) {
-//     this.showToc = breakpointObserver.observe('(max-width: 1200px)')
-//       .pipe(
-//         map(result => {
-//           this.changeDetectorRef.detectChanges();
-//           return !result.matches;
-//         })
-//       );
-//   }
-
-//   ngOnInit() {
-//     this.componentViewer.componentDocItem.pipe(takeUntil(this._destroyed)).subscribe(() => {
-//       if (this.tableOfContents) {
-//         this.tableOfContents.resetHeaders();
-//       }
-//     });
-
-//     this.showToc.pipe(
-//       skip(1),
-//       takeUntil(this._destroyed)
-//     ).subscribe(() => {
-//       if (this.tableOfContents) {
-//         this.viewers.forEach(viewer => {
-//           viewer.contentRendered.emit(viewer._elementRef.nativeElement);
-//         });
-//       }
-//     });
-//   }
-
-//   ngOnDestroy() {
-//     this._destroyed.next();
-//     this._destroyed.complete();
-//   }
-
-//   updateTableOfContents(sectionName: string, docViewerContent: HTMLElement, sectionIndex = 0) {
-//     if (this.tableOfContents) {
-//       this.tableOfContents.addHeaders(sectionName, docViewerContent, sectionIndex);
-//       this.tableOfContents.updateScrollPosition();
-//     }
-//   }
-// }
+import { HeaderLink } from "src/app/shared/header-link/header-link";
+import { ComponentPortal, DomPortalOutlet } from "@angular/cdk/portal";
 
 @Component({
     selector: "app-overview",
     templateUrl: "./overview.html",
-    styleUrls: ["./overview.scss"],
     encapsulation: ViewEncapsulation.None,
     standalone: true,
-    imports: [
-        NgIf,
-        // DocViewer,
-        // TableOfContents,
-        AsyncPipe,
-    ],
+    imports: [NgIf, TableOfContents, AsyncPipe],
 })
-export class Overview {
-    @Input() public itemLink: string = "";
+export class Overview implements OnInit {
+    public pageItem: PageItem | undefined;
+    public showToc: Observable<boolean>;
+    public docContent: string = "Loading document...";
+
+    @ViewChild("docViewer") private docViewer: ElementRef = {} as ElementRef;
+    @ViewChild("toc") tableOfContents!: TableOfContents;
+
     constructor(
-        // componentViewer: ComponentViewer,
-        breakpointObserver: BreakpointObserver,
-        changeDetectorRef: ChangeDetectorRef
+        private appRef: ApplicationRef,
+
+        public elementRef: ElementRef,
+        private domSanitizer: DomSanitizer,
+        private componentFactoryResolver: ComponentFactoryResolver,
+        private viewContainerRef: ViewContainerRef,
+        private injector: Injector,
+
+        private docFetcher: DocFetcher,
+        private route: ActivatedRoute,
+        private breakpointObserver: BreakpointObserver,
+        private changeDetectorRef: ChangeDetectorRef
     ) {
-        // super(componentViewer, breakpointObserver, changeDetectorRef);
+        this.showToc = breakpointObserver.observe("(max-width: 1200px)").pipe(
+            map((result) => {
+                this.changeDetectorRef.detectChanges();
+                return !result.matches;
+            })
+        );
+        this.route.parent?.params.subscribe((p: any) => {
+            console.log(p);
+
+            if (p.id) {
+                this.pageItem = p;
+                this.loadDoc();
+            }
+        });
+        this.route.parent?.data.subscribe((d: any) => {
+            console.log(d);
+
+            if (d.id) {
+                this.pageItem = d;
+                this.loadDoc();
+            }
+        });
     }
 
-    //   getOverviewDocumentUrl(doc: DocItem) {
-    //     // Use the explicit overview path if specified. Otherwise, compute an overview path based
-    //     // on the package name and doc item id. Overviews for components are commonly stored in a
-    //     // folder named after the component while the overview file is named similarly. e.g.
-    //     //    `cdk#overlay`     -> `cdk/overlay/overlay.md`
-    //     //    `material#button` -> `material/button/button.md`
-    //     const overviewPath = doc.overviewPath || `${doc.packageName}/${doc.id}/${doc.id}.html`;
-    //     return `/docs-content/overviews/${overviewPath}`;
-    //   }
+    ngOnInit(): void {
+        // this.loadDoc();
+    }
+
+    private loadDoc() {
+        console.log("loadDoc");
+
+        this.docContent = "Loading document...";
+        if (this.pageItem) {
+            const url: string = this.pageItem.page ? `assets/docs/${this.pageItem.id}.html` : `assets/docs/components/${this.pageItem.id}.html`;
+            this.docFetcher.fetchDocument(url).subscribe({
+                next: (d) => this.updateDocument(d),
+                error: (e) => (this.docContent = `Failed to load document: ${this.pageItem!.id}. Error: ${e.statusText}`),
+            });
+        } else {
+            this.docContent = `Incorrect Url`;
+        }
+    }
+
+    private updateDocument(rawDocument: string) {
+        rawDocument = rawDocument.replace(/href="#([^"]*)"/g, (_m: string, fragmentUrl: string) => {
+            const absoluteUrl = `${location.pathname}#${fragmentUrl}`;
+            return `href="${this.domSanitizer.sanitize(SecurityContext.URL, absoluteUrl)}"`;
+        });
+        this.docContent = rawDocument;
+        this.updateTableOfContents();
+        this.loadLinks();
+    }
+
+    private updateTableOfContents() {
+        console.log(this.tableOfContents);
+        console.log(this.docViewer.nativeElement);
+
+        if (this.tableOfContents) {
+            this.tableOfContents.addHeaders(this.pageItem?.name!, this.docViewer.nativeElement, 0);
+            this.tableOfContents.updateScrollPosition();
+        }
+    }
+
+    private loadLinks() {
+        const exampleElements = this.elementRef.nativeElement.querySelectorAll(`span[header-link]`);
+
+        [...exampleElements].forEach((element: Element) => {
+            const portalHost = new DomPortalOutlet(element, this.componentFactoryResolver, this.appRef, this.injector);
+            const examplePortal = new ComponentPortal(HeaderLink, this.viewContainerRef);
+            const exampleViewer = portalHost.attach(examplePortal);
+
+            const exampleViewerComponent = exampleViewer.instance as HeaderLink;
+            exampleViewerComponent.example = element.getAttribute("header-link")!;
+        });
+    }
 }
-
-// @Component({
-//   selector: 'component-api',
-//   templateUrl: './component-api.html',
-//   styleUrls: ['./component-api.scss'],
-//   encapsulation: ViewEncapsulation.None,
-//   standalone: true,
-//   imports: [
-//     NgIf,
-//     DocViewer,
-//     NgFor,
-//     TableOfContents,
-//     AsyncPipe,
-//   ],
-// })
-// export class ComponentApi extends ComponentBaseView {
-//   constructor(
-//     componentViewer: ComponentViewer,
-//     breakpointObserver: BreakpointObserver,
-//     changeDetectorRef: ChangeDetectorRef
-//   ) {
-//     super(componentViewer, breakpointObserver, changeDetectorRef);
-//   }
-
-//   getApiDocumentUrl(doc: DocItem) {
-//     const apiDocId = doc.apiDocId || `${doc.packageName}-${doc.id}`;
-//     return `/docs-content/api-docs/${apiDocId}.html`;
-//   }
-// }
-
-// @Component({
-//   selector: 'component-examples',
-//   templateUrl: './component-examples.html',
-//   encapsulation: ViewEncapsulation.None,
-//   standalone: true,
-//   imports: [
-//     NgIf,
-//     NgFor,
-//     ExampleViewer,
-//     AsyncPipe,
-//   ],
-// })
-// export class ComponentExamples extends ComponentBaseView {
-//   constructor(
-//     componentViewer: ComponentViewer,
-//     breakpointObserver: BreakpointObserver,
-//     changeDetectorRef: ChangeDetectorRef
-//   ) {
-//     super(componentViewer, breakpointObserver, changeDetectorRef);
-//   }
-// }
-
-// @NgModule({
-//   imports: [
-//     MatTabsModule,
-//     RouterModule,
-//     DocViewerModule,
-//     CommonModule,
-//     ComponentViewer, ComponentOverview, ComponentApi, ComponentExamples,
-//   ],
-//   exports: [ComponentViewer],
-// })
-// export class ComponentViewerModule {}

@@ -1,6 +1,6 @@
 {
   "name": "ngx-ute-material",
-  "version": "1.0.5-dev.2",
+  "version": "1.0.5-dev.3",
   "description": "Ute material addon for Angular material library",
   "scripts": {
     "start": "ng serve",

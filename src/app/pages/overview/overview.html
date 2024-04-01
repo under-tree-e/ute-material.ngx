@@ -1,5 +1,6 @@
-<!-- <ng-container *ngIf="componentViewer.componentDocItem | async; let item">
-    <h2 class="cdk-visually-hidden" tabindex="-1">Overview for {{item.id}}</h2>
-    <doc-viewer [documentUrl]="getOverviewDocumentUrl(item)" class="docs-component-view-text-content docs-component-overview" (contentRendered)="updateTableOfContents('Overview Content', $event)">
-    </doc-viewer>
-</ng-container> -->
+<ng-container *ngIf="!pageItem || !docContent">{{docContent}}</ng-container>
+<ng-container *ngIf="pageItem && docContent">
+    <h2 class="cdk-visually-hidden" tabindex="-1">Overview for {{pageItem.id}}</h2>
+    <div #docViewer class="docs-component-view-text-content docs-component-overview" [innerHTML]="docContent"></div>
+    <table-of-contents #toc container=".mat-drawer-content" *ngIf="showToc | async"></table-of-contents>
+</ng-container>

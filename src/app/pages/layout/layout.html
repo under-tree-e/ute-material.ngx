@@ -1,5 +1,4 @@
 <mat-sidenav-container class="docs-component-viewer-sidenav-container">
-    <!-- If on small screen, menu resides in drawer -->
     <mat-sidenav
         #sidenav
         class="docs-component-viewer-sidenav"
@@ -13,36 +12,43 @@
     </mat-sidenav>
     <div class="docs-component-sidenav-content">
         <div class="docs-component-sidenav-inner-content">
+            <page-header (toggleSidenav)="sidenav.toggle()"></page-header>
             <main class="docs-component-sidenav-body-content">
-                <!-- If on large screen, menu resides to left of content -->
                 <app-sidebar *ngIf="(isScreenSmall | async) === false"></app-sidebar>
                 <div class="docs-component-viewer">
-                    <page-header (toggleSidenav)="sidenav.toggle()"></page-header>
-
-                    <nav
-                        mat-tab-nav-bar
-                        mat-stretch-tabs="false"
-                        class="docs-component-viewer-tabbed-content"
-                        aria-label="Documentation Sections"
-                        id="component-viewer"
-                        focusOnNavigation
-                        [tabPanel]="panel"
-                    >
-                        <a
-                            mat-tab-link
-                            class="docs-component-viewer-section-tab"
-                            *ngFor="let section of sections"
-                            [routerLink]="section.toLowerCase()"
-                            routerLinkActive
-                            #rla="routerLinkActive"
-                            [active]="rla.isActive"
-                            >{{section}}</a
+                    <!-- <div class="viewer"> -->
+                    <ng-container *ngIf="!soloSection">
+                        <nav
+                            mat-tab-nav-bar
+                            mat-stretch-tabs="false"
+                            class="docs-component-viewer-tabbed-content"
+                            aria-label="Documentation Sections"
+                            id="component-viewer"
+                            focusOnNavigation
+                            [tabPanel]="panel"
                         >
-                    </nav>
+                            <a
+                                mat-tab-link
+                                class="docs-component-viewer-section-tab"
+                                *ngFor="let section of sections"
+                                [routerLink]="section.toLowerCase()"
+                                routerLinkActive
+                                #rla="routerLinkActive"
+                                [active]="rla.isActive"
+                                >{{section}}</a
+                            >
+                        </nav>
 
-                    <mat-tab-nav-panel #panel class="docs-component-viewer-content">
-                        <router-outlet></router-outlet>
-                    </mat-tab-nav-panel>
+                        <mat-tab-nav-panel #panel class="docs-component-viewer-content">
+                            <router-outlet></router-outlet>
+                        </mat-tab-nav-panel>
+                    </ng-container>
+                    <ng-container *ngIf="soloSection">
+                        <div class="docs-component-viewer-content">
+                            <router-outlet></router-outlet>
+                        </div>
+                    </ng-container>
+                    <!-- </div> -->
                 </div>
             </main>
             <app-footer></app-footer>
