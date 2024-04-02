@@ -1,6 +1,8 @@
 import { Component, Input } from "@angular/core";
 import { Router } from "@angular/router";
 import { MatIconModule } from "@angular/material/icon";
+import { MatSnackBar } from "@angular/material/snack-bar";
+import { Clipboard } from "@angular/cdk/clipboard";
 
 /**
  * Header link is a component that handles normalizing
@@ -18,7 +20,7 @@ import { MatIconModule } from "@angular/material/icon";
 @Component({
     selector: "header-link",
     template: `
-        <a aria-label="Link to this heading" class="docs-markdown-a" [attr.aria-describedby]="example" [href]="_getFragmentUrl()">
+        <a aria-label="Link to this heading" class="docs-markdown-a" [attr.aria-describedby]="example" [href]="getFragmentUrl()" (click)="copyLink()">
             <mat-icon>link</mat-icon>
         </a>
     `,
@@ -35,11 +37,22 @@ export class HeaderLink {
     /** Base URL that is used to build an absolute fragment URL. */
     private _baseUrl: string;
 
-    constructor(router: Router) {
+    constructor(router: Router, private readonly snackbar: MatSnackBar, private readonly clipboard: Clipboard) {
         this._baseUrl = router.url.split("#")[0];
     }
 
-    _getFragmentUrl(): string {
+    public getFragmentUrl(): string {
         return `${this._baseUrl}#${this.example}`;
+    }
+
+    public copyLink() {
+        // Reconstruct the URL using `origin + pathname` so we drop any pre-existing hash.
+        const fullUrl = location.origin + location.pathname + "#" + this.example;
+
+        if (this.clipboard.copy(fullUrl)) {
+            this.snackbar.open("Link copied", "", { duration: 2500 });
+        } else {
+            this.snackbar.open("Link copy failed. Please try again!", "", { duration: 2500 });
+        }
     }
 }

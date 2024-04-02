@@ -9,6 +9,7 @@ import { Observable, map } from "rxjs";
 import { BreakpointObserver } from "@angular/cdk/layout";
 import { HeaderLink } from "src/app/shared/header-link/header-link";
 import { ComponentPortal, DomPortalOutlet } from "@angular/cdk/portal";
+import { CodeParser } from "src/app/shared/code-parser/code-parser";
 
 @Component({
     selector: "app-overview",
@@ -22,18 +23,17 @@ export class Overview implements OnInit {
     public showToc: Observable<boolean>;
     public docContent: string = "Loading document...";
 
-    @ViewChild("docViewer") private docViewer: ElementRef = {} as ElementRef;
+    private docItem: HTMLElement | undefined;
+
     @ViewChild("toc") tableOfContents!: TableOfContents;
 
     constructor(
         private appRef: ApplicationRef,
-
         public elementRef: ElementRef,
         private domSanitizer: DomSanitizer,
         private componentFactoryResolver: ComponentFactoryResolver,
         private viewContainerRef: ViewContainerRef,
         private injector: Injector,
-
         private docFetcher: DocFetcher,
         private route: ActivatedRoute,
         private breakpointObserver: BreakpointObserver,
@@ -45,17 +45,16 @@ export class Overview implements OnInit {
                 return !result.matches;
             })
         );
-        this.route.parent?.params.subscribe((p: any) => {
-            console.log(p);
+    }
 
+    ngOnInit(): void {
+        this.route.parent?.params.subscribe((p: any) => {
             if (p.id) {
                 this.pageItem = p;
                 this.loadDoc();
             }
         });
         this.route.parent?.data.subscribe((d: any) => {
-            console.log(d);
-
             if (d.id) {
                 this.pageItem = d;
                 this.loadDoc();
@@ -63,13 +62,7 @@ export class Overview implements OnInit {
         });
     }
 
-    ngOnInit(): void {
-        // this.loadDoc();
-    }
-
     private loadDoc() {
-        console.log("loadDoc");
-
         this.docContent = "Loading document...";
         if (this.pageItem) {
             const url: string = this.pageItem.page ? `assets/docs/${this.pageItem.id}.html` : `assets/docs/components/${this.pageItem.id}.html`;
@@ -87,17 +80,21 @@ export class Overview implements OnInit {
             const absoluteUrl = `${location.pathname}#${fragmentUrl}`;
             return `href="${this.domSanitizer.sanitize(SecurityContext.URL, absoluteUrl)}"`;
         });
-        this.docContent = rawDocument;
-        this.updateTableOfContents();
-        this.loadLinks();
+
+        this.docContent = "";
+        this.docItem = [...this.elementRef.nativeElement.children].find((cd: any) => cd.classList.contains("docs-component-overview")) as HTMLElement;
+        this.docItem.innerHTML = rawDocument;
+
+        setTimeout(() => {
+            this.updateTableOfContents();
+            this.loadLinks();
+            this.loadCodes();
+        }, 0);
     }
 
     private updateTableOfContents() {
-        console.log(this.tableOfContents);
-        console.log(this.docViewer.nativeElement);
-
         if (this.tableOfContents) {
-            this.tableOfContents.addHeaders(this.pageItem?.name!, this.docViewer.nativeElement, 0);
+            this.tableOfContents.addHeaders("Overview Content", this.elementRef.nativeElement, 0);
             this.tableOfContents.updateScrollPosition();
         }
     }
@@ -112,6 +109,24 @@ export class Overview implements OnInit {
 
             const exampleViewerComponent = exampleViewer.instance as HeaderLink;
             exampleViewerComponent.example = element.getAttribute("header-link")!;
+        });
+    }
+
+    private loadCodes() {
+        const exampleElements = this.elementRef.nativeElement.querySelectorAll(`pre code`);
+
+        [...exampleElements].forEach((element: Element) => {
+            const exampleViewerDiv = document.createElement("div");
+            exampleViewerDiv.classList.add("docs-example-viewer-source");
+            element.parentElement!.parentNode!.replaceChild(exampleViewerDiv, element.parentElement!);
+
+            const portalHost = new DomPortalOutlet(exampleViewerDiv, this.componentFactoryResolver, this.appRef, this.injector);
+            const examplePortal = new ComponentPortal(CodeParser, this.viewContainerRef);
+            const exampleViewer = portalHost.attach(examplePortal);
+
+            const exampleViewerComponent = exampleViewer.instance as CodeParser;
+            exampleViewerComponent.text = element.textContent!;
+            exampleViewerComponent.addCode(element.parentElement!);
         });
     }
 }

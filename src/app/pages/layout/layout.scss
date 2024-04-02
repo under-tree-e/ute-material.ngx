@@ -110,6 +110,17 @@ div.docs-component-viewer-nav-content .mat-nav-list .mat-mdc-list-item .mat-list
         min-width: 160px;
         text-transform: uppercase;
     }
+
+    .docs-example-viewer-source {
+        code-parser {
+            position: relative;
+            .docs-example-source-copy {
+                position: absolute;
+                top: 0.25rem;
+                right: 0.25rem;
+            }
+        }
+    }
 }
 
 .docs-component-viewer-tabbed-content {

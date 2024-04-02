@@ -25,6 +25,9 @@
             "styles": [
               "src/styles.scss",
               {
+                "input": "src/highlightjs/material-light.scss"
+              },
+              {
                 "inject": false,
                 "input": "src/styles/custom-themes/pink-bluegrey.scss",
                 "bundleName": "pink-bluegrey"

@@ -11,7 +11,7 @@
 // @use './app/shared/example-viewer/example-viewer-theme';
 @use "./app/shared/footer/footer-theme";
 @use "./app/shared/navbar/navbar-theme";
-// @use './app/shared/table-of-contents/table-of-contents-theme';
+@use "./app/shared/table-of-contents/table-of-contents-theme";
 // @use './app/shared/cookie-popup/cookie-popup-theme';
 @use "./styles/api-theme";
 @use "./styles/markdown-theme";
@@ -63,13 +63,13 @@
     @include api-theme.theme($theme);
     @include markdown-theme.theme($theme);
     @include svg-theme.theme($theme);
-    // @include tables-theme.theme($theme);
+    @include tables-theme.theme($theme);
     // @include example-viewer-theme.theme($theme);
     @include footer-theme.theme($theme);
     // @include guide-list-theme.theme($theme);
     @include home-theme.theme($theme);
     @include not-found-theme.theme($theme);
     @include navbar-theme.theme($theme);
-    // @include table-of-contents-theme.theme($theme);
+    @include table-of-contents-theme.theme($theme);
     // @include cookie-popup-theme.theme($theme);
 }

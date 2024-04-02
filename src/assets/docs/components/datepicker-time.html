@@ -30,9 +30,19 @@
     <p>The <code>mat-date-range-input</code> component requires two <code>input</code> elements for the start and end dates, respectively:</p>
     <pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">mat-date-range-input</span>&gt;</span>
     <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">matStartDate</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">&quot;Start date&quot;</span>&gt;</span>
-    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">matEndDate</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">&quot;End date&quot;</span>&gt;</span>
-  <span class="hljs-tag">&lt;/<span class="hljs-name">mat-date-range-input</span>&gt;</span>
-  </code></pre>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">matEndDate</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">&quot;End date&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">mat-date-range-input</span>&gt;</span></code></pre>
+
+    <pre><code class="language-html">
+<span class="hljs-name"><span class="hljs-attr">import</span> {AppComponent} from '...';</span>
+<span class="hljs-attr">import</span> {NglModule} from 'ng-lightning';
+
+@NgModule({
+imports: [..., NglModule],
+declarations: [AppComponent, ...],
+bootstrap: [AppComponent],
+})
+export class AppModule {}
+    </code></pre>
     <p>
         The <code>mat-date-range-picker</code> component acts as the pop-up panel for selecting dates. This works in the same way as <code>mat-datepicker</code>, but allows the user to select multiple
         times:

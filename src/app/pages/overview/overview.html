@@ -1,6 +1,3 @@
-<ng-container *ngIf="!pageItem || !docContent">{{docContent}}</ng-container>
-<ng-container *ngIf="pageItem && docContent">
-    <h2 class="cdk-visually-hidden" tabindex="-1">Overview for {{pageItem.id}}</h2>
-    <div #docViewer class="docs-component-view-text-content docs-component-overview" [innerHTML]="docContent"></div>
-    <table-of-contents #toc container=".mat-drawer-content" *ngIf="showToc | async"></table-of-contents>
-</ng-container>
+<h2 class="cdk-visually-hidden" tabindex="-1">Overview for {{pageItem ? pageItem.id : ""}}</h2>
+<div class="docs-component-view-text-content docs-component-overview">{{docContent}}</div>
+<table-of-contents #toc container=".mat-drawer-content" *ngIf="showToc | async"></table-of-contents>
