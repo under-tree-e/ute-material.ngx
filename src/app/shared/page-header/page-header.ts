@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { PageTitle } from "../page-title/page-title";
+import { PageSEO } from "../page-seo/page-seo";
 
 import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
@@ -12,11 +12,11 @@ import { MatIconModule } from "@angular/material/icon";
     imports: [MatButtonModule, MatIconModule],
 })
 export class PageHeader {
-    constructor(public pageTitle: PageTitle) {}
+    constructor(public pageSeo: PageSEO) {}
 
     @Output() public toggleSidenav: EventEmitter<void> = new EventEmitter<void>();
 
     public getTitle() {
-        return this.pageTitle.title;
+        return this.pageSeo.title;
     }
 }

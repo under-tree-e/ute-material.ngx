@@ -3,7 +3,7 @@ import { Footer } from "../../shared/footer/footer";
 import { MatIconModule } from "@angular/material/icon";
 import { MatButtonModule } from "@angular/material/button";
 import { RouterModule } from "@angular/router";
-import { PageTitle } from "src/app/shared/page-title/page-title";
+import { PageSEO } from "src/app/shared/page-seo/page-seo";
 
 @Component({
     selector: "app-home",
@@ -16,11 +16,13 @@ export class HomePage implements OnInit {
     @HostBinding("class.main-content") readonly mainContentClass = true;
     @HostBinding("class.animations-disabled") readonly animationsDisabled: boolean;
 
-    constructor(public pageTitle: PageTitle, @Optional() @Inject(ANIMATION_MODULE_TYPE) animationsModule?: string) {
+    constructor(public pageSeo: PageSEO, @Optional() @Inject(ANIMATION_MODULE_TYPE) animationsModule?: string) {
         this.animationsDisabled = animationsModule === "NoopAnimations";
     }
 
     ngOnInit(): void {
-        this.pageTitle.title = "";
+        this.pageSeo.title = "";
+        this.pageSeo.desk = "";
+        this.pageSeo.keys = "";
     }
 }

@@ -12,7 +12,7 @@ import { Observable, map } from "rxjs";
 import { _constants } from "src/app/_constants";
 import { MatTabsModule } from "@angular/material/tabs";
 import { PageItem, PageManager } from "src/app/shared/page-manager/page-manager";
-import { PageTitle } from "src/app/shared/page-title/page-title";
+import { PageSEO } from "src/app/shared/page-seo/page-seo";
 
 @Component({
     selector: "app-layout",
@@ -30,7 +30,7 @@ export class Layout {
 
     @ViewChild(MatSidenav) sidenav!: MatSidenav;
 
-    constructor(private route: ActivatedRoute, private breakpoints: BreakpointObserver, public pageManager: PageManager, private pageTitle: PageTitle) {
+    constructor(private route: ActivatedRoute, private breakpoints: BreakpointObserver, public pageManager: PageManager, private pageSeo: PageSEO) {
         this.isScreenSmall = breakpoints.observe(`(max-width: ${_constants["small-breakpoint-width"]}px)`).pipe(map((breakpoint) => breakpoint.matches));
         this.soloSection = false;
 
@@ -47,7 +47,9 @@ export class Layout {
     private updatePage(value: any) {
         this.pageItem = this.pageManager.getItemById(value["id"]);
         if (this.pageItem) {
-            this.pageTitle.title = this.pageItem.name;
+            this.pageSeo.title = this.pageItem.name;
+            this.pageSeo.desk = this.pageItem.desk;
+            this.pageSeo.keys = this.pageItem.keys;
         }
     }
 }
