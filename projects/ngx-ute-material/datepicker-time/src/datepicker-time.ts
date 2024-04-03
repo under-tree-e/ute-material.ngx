@@ -179,7 +179,6 @@ export class UteDatepickerTime implements OnInit {
             changeSub.unsubscribe();
             viewSub.unsubscribe();
         });
-        console.log(this.matDatepicker.datepickerInput._dateFormats.parse.dateInput);
 
         if (!this.isMoment && this.matDatepicker.datepickerInput._dateFormats.parse.dateInput != "input") {
             let dateInput: any = { year: "numeric", month: "numeric", day: "numeric", hour12: this.hourFormat === 12 ? true : false, hour: "2-digit", minute: "2-digit" };
