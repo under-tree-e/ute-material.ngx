@@ -9,12 +9,26 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatCardModule } from "@angular/material/card";
+import { NgClass, NgIf } from "@angular/common";
 
 @Component({
     templateUrl: "./datepicker-time.html",
     styleUrl: "./datepicker-time.scss",
     standalone: true,
-    imports: [MatFormFieldModule, MatDatepickerModule, UteDatepickerTime, FormsModule, ReactiveFormsModule, MatInputModule, MatSelectModule, MatButtonModule, MatCheckboxModule, MatCardModule],
+    imports: [
+        MatFormFieldModule,
+        MatDatepickerModule,
+        UteDatepickerTime,
+        FormsModule,
+        ReactiveFormsModule,
+        MatInputModule,
+        MatSelectModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        MatCardModule,
+        NgIf,
+        NgClass,
+    ],
     providers: [provideNativeDateAdapter()],
 })
 export class DatepickerTimeComponent {
@@ -33,27 +47,23 @@ export class DatepickerTimeComponent {
     public showDiviner: boolean = true;
     public customButtons: { today: ""; cancel: ""; apply: "" } | null = null;
     public dynamicTouchUI: boolean = false;
-
-    ////////////////////
     public currentDate: Date = new Date();
-    public initDate: Date = new Date();
-    public startDate: Date = new Date();
-    public endDate: Date = new Date();
-    public minDate: Date = new Date(new Date().setDate(new Date().getDate() - 1));
-    public maxDate: Date = new Date(new Date().setDate(new Date().getDate() + 2));
-
-    constructor() {}
+    public isAction: boolean = false;
+    public isLoad: boolean = true;
 
     public dateChange(event: any) {
-        // console.log(event);
-        this.currentDate = event;
+        this.currentDate = new Date(event.value);
     }
 
-    public filter = (d: Date | null): boolean => {
-        const day = (d || new Date()).getDay();
-        // Prevent Saturday and Sunday from being selected.
-        return day !== 0 && day !== 6;
-    };
-    // //////////////////////////////////////
-    public addActions() {}
+    public toggleActions() {
+        this.reloadDatepicker();
+        this.isAction = !this.isAction;
+    }
+
+    public reloadDatepicker() {
+        this.isLoad = false;
+        setTimeout(() => {
+            this.isLoad = true;
+        }, 250);
+    }
 }
