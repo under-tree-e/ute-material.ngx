@@ -23,7 +23,7 @@ export class TimeWheel implements OnChanges {
     @Input() public block: string[] = [];
     @Input() public array: string[] = [];
     @Input() public underline: boolean = false;
-    @Input() public visibleItemsCount: number = 5;
+    @Input() public visibleItemsCount: 1 | 3 | 5 = 5;
     @Input() public currentIndex: number = 0;
     @Input() public infiniteScroll: boolean = true;
     @Output() public onChange: EventEmitter<number> = new EventEmitter<number>();
@@ -50,7 +50,7 @@ export class TimeWheel implements OnChanges {
      */
     ngAfterViewInit(): void {
         this.contH = this.itemSize * this.visibleItemsCount;
-        this.blockH = this.itemSize + this.itemSize;
+        this.blockH = this.itemSize + (this.visibleItemsCount === 5 ? this.itemSize : this.visibleItemsCount === 3 ? 0 : this.itemSize * -1);
 
         this.items = Array(this.array.length).fill("");
 
