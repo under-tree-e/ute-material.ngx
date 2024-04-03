@@ -12,8 +12,8 @@ const PAGES: PageItem[] = [
         name: "Get Started",
     },
     {
-        id: "support",
-        name: "Support",
+        id: "about-us",
+        name: "About us",
     },
 ];
 

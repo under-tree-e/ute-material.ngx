@@ -11,6 +11,11 @@ export const AppRoutes: Routes = [
         data: { id: "get-started", page: true },
         loadChildren: () => import("./pages/layout").then((m) => m.LayoutModule),
     },
+    {
+        path: "about-us",
+        data: { id: "about-us", page: true },
+        loadChildren: () => import("./pages/layout").then((m) => m.LayoutModule),
+    },
     { path: "components", pathMatch: "full", redirectTo: "components/default" },
     {
         path: "components/:id",
