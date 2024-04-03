@@ -27,12 +27,11 @@ export class UteDatepickerSettings {
     @Input() public weekdaysSymbols: 1 | 2 | 3 | null = null;
 
     private nativeDateAdapter: NativeDateAdapter = new NativeDateAdapter();
-    private defaultDayOfWeekNames: any;
     private isMoment: boolean = false;
+    private copyCurrentAdapter: any;
 
     constructor(@Inject(MatDatepicker) private readonly matDatepicker: any, @Inject(DateAdapter) public dateAdapter: DateAdapter<any>) {
         this.isMoment = (this.dateAdapter as any).useUtcForDisplay === undefined ? true : false;
-        this.defaultDayOfWeekNames = this.dateAdapter.getDayOfWeekNames;
     }
 
     ngAfterViewInit() {
@@ -42,6 +41,8 @@ export class UteDatepickerSettings {
             Object.assign(instanceCopy, instance);
             return instanceCopy;
         }
+
+        this.copyCurrentAdapter = duplicateInstance(this.dateAdapter);
 
         this.matDatepicker.openedStream.subscribe(() => {
             // Custom classes
@@ -64,7 +65,7 @@ export class UteDatepickerSettings {
 
             // Weekdays header format
             this.dateAdapter.getDayOfWeekNames = (style: "long" | "short" | "narrow") =>
-                this.weekdaysSymbols ? this.nativeDateAdapter.getDayOfWeekNames("long").map((nr: string) => nr.slice(0, this.weekdaysSymbols!)) : this.defaultDayOfWeekNames(style);
+                this.weekdaysSymbols ? this.nativeDateAdapter.getDayOfWeekNames("long").map((nr: string) => nr.slice(0, this.weekdaysSymbols!)) : this.copyCurrentAdapter.getDayOfWeekNames(style);
         });
 
         // Restore default values
