@@ -15,7 +15,7 @@ We are a small group of enthusiasts, so if you want to improve the development o
 
 <a href="https://www.buymeacoffee.com/under.tree.e" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
-Live demo with all settings, COMING SOON
+Live demo with all settings, [HERE](https://ute-material.github.io/components/datepicker-time)
 
 ## Getting started
 
