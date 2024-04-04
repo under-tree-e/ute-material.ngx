@@ -13,7 +13,9 @@
     "major-update": "npm version major --no-git-tag-version",
     "minor-update": "npm version minor --no-git-tag-version",
     "patch-update": "npm version patch --no-git-tag-version",
-    "dev-update": "npm version prerelease --preid=dev --no-git-tag-version && git add . && git commit -m 'dev_update_'$npm_package_version && git push --all"
+    "dev-update": "npm version prerelease --preid=dev --no-git-tag-version && git add . && git commit -m 'dev_update_'$npm_package_version && git push --all",
+    "----": "",
+    "deploy": "ng build --base-href '/ute-material.ngx/' && npx angular-cli-ghpages --dir=dist/ngx-ute-material-app"
   },
   "keywords": [
     "angular",
@@ -56,6 +58,7 @@
     "@angular/compiler-cli": "^17.2.3",
     "@types/jasmine": "~5.1.4",
     "@types/node": "^20.11.24",
+    "angular-cli-ghpages": "^2.0.0-beta.2",
     "jasmine-core": "~5.1.2",
     "karma": "~6.4.3",
     "karma-chrome-launcher": "~3.2.0",

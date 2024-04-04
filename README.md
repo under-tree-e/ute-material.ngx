@@ -14,7 +14,7 @@ We are a small group of enthusiasts, so if you want to improve the development o
 
 <a href="https://www.buymeacoffee.com/under.tree.e" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
-Live demo with all modules, [HERE](https://ute-material.github.io)
+Live demo with all modules, [HERE](https://under-tree-e.github.io/ute-material.ngx)
 
 ## Getting started
 
@@ -26,14 +26,14 @@ npm i ngx-ute-material
 
 And... Yes that's all. Next, connect the module you are interested in. The list of modules and instructions for them are presented in the table below:
 
-| Package                                | Description                           |                                 Docs                                  |
-| -------------------------------------- | ------------------------------------- | :-------------------------------------------------------------------: |
-| `ngx-ute-material/datepicker-time`     | Time picker module for Mat Datepicker |   [Docs](https://ute-material.github.io/components/datepicker-time)   |
-| `ngx-ute-material/datepicker-settings` | Settings addon for Mat Datepicker     | [Docs](https://ute-material.github.io/components/datepicker-settings) |
-| `ngx-ute-material/file-input`          | File picker module for Mat Input      |                                  DEV                                  |
-| `ngx-ute-material/select-search`       | Input & search module for Mat Select  |                                  DEV                                  |
-| `ngx-ute-material/carousel`            | Carousel module for Angular Material  |                                  DEV                                  |
-| `ngx-ute-material/rate-picker`         | Rate module for Angular Material      |                                  DEV                                  |
+| Package                                | Description                           |                                          Docs                                          |
+| -------------------------------------- | ------------------------------------- | :------------------------------------------------------------------------------------: |
+| `ngx-ute-material/datepicker-time`     | Time picker module for Mat Datepicker |   [Docs](https://under-tree-e.github.io/ute-material.ngx/components/datepicker-time)   |
+| `ngx-ute-material/datepicker-settings` | Settings addon for Mat Datepicker     | [Docs](https://under-tree-e.github.io/ute-material.ngx/components/datepicker-settings) |
+| `ngx-ute-material/file-input`          | File picker module for Mat Input      |                                          DEV                                           |
+| `ngx-ute-material/select-search`       | Input & search module for Mat Select  |                                          DEV                                           |
+| `ngx-ute-material/carousel`            | Carousel module for Angular Material  |                                          DEV                                           |
+| `ngx-ute-material/rate-picker`         | Rate module for Angular Material      |                                          DEV                                           |
 
 Attention!
 Modules marked with `DEV` are under development and are not currently available in the library.
