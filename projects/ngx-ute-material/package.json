@@ -1,7 +1,14 @@
 {
   "name": "ngx-ute-material",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Ute material addon for Angular material library",
+  "scripts": {
+    "build": "ng build",
+    "---": "",
+    "major-update": "npm version major --no-git-tag-version",
+    "minor-update": "npm version minor --no-git-tag-version",
+    "patch-update": "npm version patch --no-git-tag-version"
+  },
   "keywords": [
     "angular",
     "material",
@@ -9,7 +16,9 @@
     "es5",
     "datepicker-time",
     "datetime",
-    "timepicker"
+    "timepicker",
+    "datepicker format",
+    "datepicker settings"
   ],
   "author": {
     "name": "Under Tree Entertainment",

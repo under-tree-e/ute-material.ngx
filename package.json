@@ -1,6 +1,6 @@
 {
   "name": "ngx-ute-material",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "description": "Ute material addon for Angular material library",
   "scripts": {
     "start": "ng serve",
@@ -13,7 +13,10 @@
     "major-update": "npm version major --no-git-tag-version",
     "minor-update": "npm version minor --no-git-tag-version",
     "patch-update": "npm version patch --no-git-tag-version",
-    "dev-update": "npm version prerelease --preid=dev --no-git-tag-version && git add . && git commit -m 'dev_update_'$npm_package_version && git push --all"
+    "dev-update": "npm version prerelease --preid=dev --no-git-tag-version && git add . && git commit -m 'dev_update_'$npm_package_version && git push --all",
+    "----": "",
+    "publish": "cd dist/ngx-ute-material/ && npm publish",
+    "deploy": "ng build --base-href '/ute-material.ngx/' && npx angular-cli-ghpages --dir=dist/ngx-ute-material-app"
   },
   "keywords": [
     "angular",
@@ -39,11 +42,13 @@
   "homepage": "https://github.com/under-tree-e/ute-material.ngx#readme",
   "private": false,
   "dependencies": {
+    "@angular/animations": "^17.2.3",
     "@angular/common": "^17.2.3",
     "@angular/compiler": "^17.2.3",
     "@angular/core": "^17.2.3",
     "@angular/material": "^17.2.1",
     "@angular/platform-browser-dynamic": "^17.2.3",
+    "@angular/router": "^17.2.3",
     "rxjs": "~7.8.1",
     "tslib": "^2.6.2",
     "zone.js": "~0.14.4"
@@ -54,6 +59,7 @@
     "@angular/compiler-cli": "^17.2.3",
     "@types/jasmine": "~5.1.4",
     "@types/node": "^20.11.24",
+    "angular-cli-ghpages": "^2.0.0-beta.2",
     "jasmine-core": "~5.1.2",
     "karma": "~6.4.3",
     "karma-chrome-launcher": "~3.2.0",

@@ -1,0 +1,82 @@
+<div class="datepicker-settings-block">
+    <div class="picker-block" [ngClass]="{filtered: !isLoad}">
+        <mat-form-field *ngIf="isLoad">
+            <mat-label>Choose a datetime</mat-label>
+            <input matInput [matDatepicker]="picker" (dateChange)="dateChange($event)" [value]="currentDate" />
+            <mat-hint>{{format ? format : 'MM/DD/YYYY'}}</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker
+                #picker
+                uteDateSettings
+                [format]="format"
+                [weekStart]="weekStart"
+                [overlayClass]="overlayClass"
+                [backdropClass]="backdropClass"
+                [contentClass]="contentClass"
+                [weekdaysSymbols]="weekdaysSymbols"
+            ></mat-datepicker>
+        </mat-form-field>
+    </div>
+    <div class="text">Current Date: {{currentDate}}</div>
+</div>
+
+<div class="datepicker-settings-settings">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Date Input</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-form-field>
+                <mat-label>Custom format (Native sample)</mat-label>
+                <mat-select [(ngModel)]="format" (selectionChange)="reloadDatepicker()">
+                    <mat-option value="">--Default--</mat-option>
+                    <mat-option value="YYYY-MM-dd HH:mm:ss">YYYY-MM-dd HH:mm:ss</mat-option>
+                    <mat-option value="MMM dd YYYY">MMM dd YYYY</mat-option>
+                    <mat-option value="shortDate">shortDate</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-card-content>
+    </mat-card>
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Custom Classes</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-form-field>
+                <mat-label>Custom overlay class</mat-label>
+                <input matInput [(ngModel)]="overlayClass" (change)="reloadDatepicker()" />
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Custom backdrop class</mat-label>
+                <input matInput [(ngModel)]="backdropClass" (change)="reloadDatepicker()" />
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Custom content class</mat-label>
+                <input matInput [(ngModel)]="contentClass" (change)="reloadDatepicker()" />
+            </mat-form-field>
+        </mat-card-content>
+    </mat-card>
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Calendar Style</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-form-field>
+                <mat-label>First day of week</mat-label>
+                <mat-select [(ngModel)]="weekStart" (selectionChange)="reloadDatepicker()">
+                    <mat-option [value]="0">Sunday</mat-option>
+                    <mat-option [value]="1">Monday</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Week day number of symbols</mat-label>
+                <mat-select [(ngModel)]="weekdaysSymbols" (selectionChange)="reloadDatepicker()">
+                    <mat-option [value]="null">--Default--</mat-option>
+                    <mat-option [value]="1">S M T W T F S</mat-option>
+                    <mat-option [value]="2">Su Mo Tu We Th Fr Sa</mat-option>
+                    <mat-option [value]="3">Sun Mon Tue Wed Thu Fri Sat</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-card-content>
+    </mat-card>
+</div>

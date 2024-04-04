@@ -97,17 +97,19 @@ export class TimeButton implements OnChanges {
      * @returns boolean status
      */
     public getDisabled(side: boolean): boolean {
-        if (side) {
-            if (this.currentIndex === this.array.length - 1) {
-                return true;
-            } else if (this.infiniteScroll) {
-                return false;
-            }
-        } else {
-            if (this.currentIndex === 0) {
-                return true;
-            } else if (this.infiniteScroll) {
-                return false;
+        if (!this.infiniteScroll) {
+            if (side) {
+                if (this.currentIndex === this.array.length - 1) {
+                    return true;
+                } else if (this.infiniteScroll) {
+                    return false;
+                }
+            } else {
+                if (this.currentIndex === 0) {
+                    return true;
+                } else if (this.infiniteScroll) {
+                    return false;
+                }
             }
         }
         return false;

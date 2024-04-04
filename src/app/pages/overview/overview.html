@@ -1,0 +1,3 @@
+<h2 class="cdk-visually-hidden" tabindex="-1">Overview for {{pageItem ? pageItem.id : ""}}</h2>
+<div class="docs-component-view-text-content docs-component-overview">{{docContent}}</div>
+<table-of-contents #toc container=".mat-drawer-content" *ngIf="showToc | async"></table-of-contents>

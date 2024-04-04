@@ -1,0 +1,135 @@
+<div class="datepicker-time-block">
+    <div class="picker-block" [ngClass]="{filtered: !isLoad}">
+        <mat-form-field *ngIf="isLoad">
+            <mat-label>Choose a datetime</mat-label>
+            <input matInput [matDatepicker]="picker" (dateChange)="dateChange($event)" [value]="currentDate" />
+            <mat-hint>MM/DD/YYYY, HH:mm:ss</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker>
+                <mat-datepicker-actions *ngIf="isAction">
+                    <button mat-button matDatepickerCancel>Cancel</button>
+                    <button mat-raised-button color="primary" matDatepickerApply>Apply</button>
+                </mat-datepicker-actions>
+            </mat-datepicker>
+            <ute-datepicker-time
+                [matDatepicker]="picker"
+                [desktopStyle]="desktopStyle"
+                [mobileStyle]="mobileStyle"
+                [infiniteScroll]="infiniteScroll"
+                [visibleItemsCount]="visibleItemsCount"
+                [hourFormat]="hourFormat"
+                [hourStep]="hourStep"
+                [minuteStep]="minuteStep"
+                [secondStep]="secondStep"
+                [decoratorStyle]="decoratorStyle"
+                [showSeconds]="showSeconds"
+                [showToday]="showToday"
+                [showIcon]="showIcon"
+                [showDiviner]="showDiviner"
+                [customButtons]="customButtons"
+                [dynamicTouchUI]="dynamicTouchUI"
+            ></ute-datepicker-time>
+        </mat-form-field>
+    </div>
+    <div class="text">Current Date: {{currentDate}}</div>
+</div>
+
+<div class="datepicker-time-settings">
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>TimePicker Styles</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-form-field>
+                <mat-label>Time Style for Desktop</mat-label>
+                <mat-select [(ngModel)]="desktopStyle" (selectionChange)="reloadDatepicker()">
+                    <mat-option value="button">Button</mat-option>
+                    <mat-option value="wheel">Wheel</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Time Style for Mobile</mat-label>
+                <mat-select [(ngModel)]="mobileStyle">
+                    <mat-option value="button">Button</mat-option>
+                    <mat-option value="wheel">Wheel</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Style for Decorator</mat-label>
+                <mat-select [(ngModel)]="decoratorStyle">
+                    <mat-option value="outline">Outline</mat-option>
+                    <mat-option value="underline">Underline</mat-option>
+                    <mat-option value="none">None</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-checkbox [(ngModel)]="infiniteScroll">Active Infinite Scroll</mat-checkbox>
+            <mat-checkbox [(ngModel)]="showDiviner">Show Two Dots</mat-checkbox>
+            <mat-checkbox [(ngModel)]="showSeconds">Show Seconds</mat-checkbox>
+            <mat-checkbox [(ngModel)]="dynamicTouchUI">Automatic Active TouchUI for Mobile</mat-checkbox>
+        </mat-card-content>
+    </mat-card>
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>Action Bar Settings</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <button mat-raised-button *ngIf="!isAction" (click)="toggleActions()">Add Custom Actions</button>
+            <button mat-raised-button *ngIf="isAction" (click)="toggleActions()">Remove Custom Actions</button>
+            <mat-checkbox [(ngModel)]="showToday">Show Today Button</mat-checkbox>
+            <mat-checkbox [(ngModel)]="showIcon">Show Icon in Action Bar</mat-checkbox>
+        </mat-card-content>
+    </mat-card>
+    <mat-card>
+        <mat-card-header>
+            <mat-card-title>TimePicker Format</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+            <mat-form-field>
+                <mat-label>Number of Visible Items for Wheel Style</mat-label>
+                <mat-select [(ngModel)]="visibleItemsCount" (selectionChange)="reloadDatepicker()">
+                    <mat-option [value]="1">1</mat-option>
+                    <mat-option [value]="3">3</mat-option>
+                    <mat-option [value]="5">5</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Hour Format 12/24</mat-label>
+                <mat-select [(ngModel)]="hourFormat">
+                    <mat-option [value]="24">24</mat-option>
+                    <mat-option [value]="12">12</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Step for Hour Picker</mat-label>
+                <mat-select [(ngModel)]="hourStep" (selectionChange)="reloadDatepicker()">
+                    <mat-option [value]="1">1</mat-option>
+                    <mat-option [value]="2">2</mat-option>
+                    <mat-option [value]="3">3</mat-option>
+                    <mat-option [value]="4">4</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Step for Minute Picker</mat-label>
+                <mat-select [(ngModel)]="minuteStep" (selectionChange)="reloadDatepicker()">
+                    <mat-option [value]="1">1</mat-option>
+                    <mat-option [value]="5">5</mat-option>
+                    <mat-option [value]="10">10</mat-option>
+                    <mat-option [value]="15">15</mat-option>
+                    <mat-option [value]="20">20</mat-option>
+                    <mat-option [value]="30">30</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Step for Second Picker</mat-label>
+                <mat-select [(ngModel)]="minuteStep" (selectionChange)="reloadDatepicker()">
+                    <mat-option [value]="1">1</mat-option>
+                    <mat-option [value]="5">5</mat-option>
+                    <mat-option [value]="10">10</mat-option>
+                    <mat-option [value]="15">15</mat-option>
+                    <mat-option [value]="20">20</mat-option>
+                    <mat-option [value]="30">30</mat-option>
+                </mat-select>
+            </mat-form-field>
+        </mat-card-content>
+    </mat-card>
+</div>

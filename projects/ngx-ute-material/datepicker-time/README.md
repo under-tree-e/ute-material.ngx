@@ -15,7 +15,7 @@ We are a small group of enthusiasts, so if you want to improve the development o
 
 <a href="https://www.buymeacoffee.com/under.tree.e" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
-Live demo with all settings, COMING SOON
+Live demo with all settings, [HERE](https://under-tree-e.github.io/ute-material.ngx/components/datepicker-time)
 
 ## Getting started
 
@@ -72,7 +72,7 @@ Add component to your html code near `mat-datepicker`:
 | decoratorStyle    |               string:<br>'outline' \| 'underline' \| 'none'               |   'outline'   | Adds decoration to the selected values on the pickers. `Outline` - creates a stroke around the selected values, including `AM/PM`. `Underline` - underlines numerical values, excluding `AM/PM`. |
 | showSeconds       |                                  boolean                                  |     true      | Adds a picker for seconds.                                                                                                                                                                       |
 | showToday         |                                  boolean                                  |     true      | Shows `Today` button in the bottom action bar.                                                                                                                                                   |
-| showIcon          |                                  boolean                                  |     true      | Displays icons on the buttons in the action bar. Required: `[Material Icon Link](https://developers.google.com/fonts/docs/material_icons#setup_method_1_using_via_google_fonts)`Linkbelow.       |
+| showIcon          |                                  boolean                                  |     false     | Displays icons on the buttons in the action bar. Required: `[Material Icon Link](https://developers.google.com/fonts/docs/material_icons#setup_method_1_using_via_google_fonts)`Linkbelow.       |
 | showDiviner       |                                  boolean                                  |     true      | Show two dots (`:`) between pickers.                                                                                                                                                             |
 | customButtons     | object:<br>{ today: "string"; cancel: "string"; apply: "string" } \| null |     null      | Allows you to insert your own text in the reference button on the action bar below, or hide the text by writing the value `''`                                                                   |
 | dynamicTouchUI    |                                  boolean                                  |     false     | Dynamically adds the `touchUi` to `mat-datepicker` parameter depending on the current device. Set (`false`) if you are modifying `touchUi`.                                                      |
