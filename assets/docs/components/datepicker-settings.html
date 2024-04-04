@@ -1,0 +1,135 @@
+<div class="docs-markdown">
+    <p>
+        Datepicker Settings is an additional params to make default <code>Mat Datepicker</code> more customizable as date input format, week header names format, start day of week & more classes for your custom style.
+    </p>
+
+    <h3 id="getting-started" class="docs-header-link">
+        <span header-link="getting-started"></span>
+        Getting started
+    </h3>
+    <p>Install the main package:</p>
+    <pre><code class="language-html">
+    <span class="hljs-tag">npm</span> i ngx-ute-material
+    </code></pre>
+
+    <p>Import <code>UteDatepickerSettings</code> into your <code>app.module.ts</code>:</p>
+
+    <pre><code class="language-ts">
+    <span class="hljs-tag">import</span> { <span class="hljs-name">NgModule</span> } <span class="hljs-tag">from</span> <span class="hljs-string">'@angular/core'</span>;
+    <span class="hljs-tag">import</span> { <span class="hljs-name">BrowserModule</span> } <span class="hljs-tag">from</span> <span class="hljs-string">'@angular/platform-browser'</span>;
+
+    <span class="hljs-tag">import</span> { <span class="hljs-name">AppRoutingModule</span> } <span class="hljs-tag">from</span> <span class="hljs-string">'./app-routing.module'</span>;
+    <span class="hljs-tag">import</span> { <span class="hljs-name">AppComponent</span> } <span class="hljs-tag">from</span> <span class="hljs-string">'./app.component'</span>;
+    <span class="hljs-tag">import</span> { <span class="hljs-name">UteDatepickerSettings</span> } <span class="hljs-tag">from</span> <span class="hljs-string">'ngx-ute-material/datepicker-settings'</span>;
+
+    <span class="hljs-string">@</span><span class="hljs-name">NgModule</span>({
+        declarations: [
+            <span class="hljs-name">AppComponent</span>
+        ],
+        imports: [
+            <span class="hljs-name">BrowserModule,</span>
+            <span class="hljs-name">AppRoutingModule,</span>
+            <span class="hljs-name">UteDatepickerSettings</span>
+        ],
+        providers: [],
+        bootstrap: [<span class="hljs-name">AppComponent</span>]
+    })
+    <span class="hljs-tag">export class</span> <span class="hljs-name">AppModule</span> {}
+    </code></pre>
+
+    <p>Add directive <code>uteDateSettings</code> to your <code>mat-datepicker</code> component:</p>
+
+    <pre><code class="language-html">
+    <<span class="hljs-tag">mat-form-field</span>>
+        <<span class="hljs-tag">mat-label</span>>Choose a date&lt;/<span class="hljs-tag">mat-label</span>>
+        <<span class="hljs-tag">input</span> <span class="hljs-string">matInput</span> <span class="hljs-name">[matDatepicker]</span>="picker" />
+        <<span class="hljs-tag">mat-hint</span>>MM/DD/YYYY&lt;/<span class="hljs-tag">mat-hint</span>>
+        <<span class="hljs-tag">mat-datepicker-toggle</span> <span class="hljs-string">matIconSuffix</span> <span class="hljs-name">[for]</span>="picker">&lt;/<span class="hljs-tag">mat-datepicker-toggle</span>>
+        <<span class="hljs-tag">mat-datepicker</span> #picker <span class="hljs-string">uteDateSettings</span>></mat-datepicker>
+    &lt;/<span class="hljs-tag">mat-form-field</span>>
+    </code></pre>
+    
+    <h3 id="input-properties" class="docs-header-link">
+        <span header-link="input-properties"></span>
+        Input Properties
+    </h3>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Property</th>
+                <th>Input type</th>
+                <th>Default value</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>format</td>
+                <td>string</td>
+                <td>''</td>
+                <td>Custom date format for date input. Support <code>NativeDateAdaper</code> and <code>MomentDateAdapter</code>.</td>
+            </tr>
+            <tr>
+                <td>weekStart</td>
+                <td>number: 0 | 1</td>
+                <td>0</td>
+                <td>Change first day of week in <code>MatCalendar</code>. 0 - Sunday; 1 - Monday.</td>
+            </tr>
+            <tr>
+                <td>overlayClass</td>
+                <td>string</td>
+                <td>''</td>
+                <td>Add custom class to DOM with class <code>cdk-overlay-pane</code>.</td>
+            </tr>
+            <tr>
+                <td>backdropClass</td>
+                <td>string</td>
+                <td>''</td>
+                <td>Add custom class to DOM with class <code>cdk-overlay-backdrop</code>.</td>
+            </tr>
+            <tr>
+                <td>contentClass</td>
+                <td>string</td>
+                <td>''</td>
+                <td>Add custom class to DOM with class <code>mat-datepicker-content</code>.</td>
+            </tr>
+            <tr>
+                <td>weekdaysSymbols</td>
+                <td>number | null: 1 | 2 | 3 | null</td>
+                <td>1</td>
+                <td>Change number of symbols in <code>MatCalendar</code> table header for days of week. 1 - 'S', 2 - 'Su', 3 - 'Sun'.</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h3 id="additional-info" class="docs-header-link">
+        <span header-link="additional-info"></span>
+        Additional Info
+    </h3>
+
+    <ul>
+        <li>Module automatic integrate with default installed <code>DateAdapter</code> such as <code>NativeDateAdapter</code> or <code>MomentDateAdapter</code>.</li>
+        <li>Custom date format can be used at any <code>DateAdapter</code>.</li>
+        <li>All settings from this module works only with <code>mat-datepicker</code> component to which this directive is connected.</li>
+    </ul>
+
+    <h3 id="planned-improvements" class="docs-header-link">
+        <span header-link="planned-improvements"></span>
+        Planned Improvements
+    </h3>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Improvement</th>
+                <th>Priority</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>Settings for all Datepicker in app</td>
+                <td>Low</td>
+                <td>Wait</td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>

@@ -1,0 +1,207 @@
+<div class="docs-markdown">
+    <p>
+        Datepicker Time is highly-customizable, Angular SSR, multi-locale module with a variety of designs and interactions for both mobile and desktop platforms time picker for Angular Material
+        Datepicker.
+    </p>
+
+    <h3 id="getting-started" class="docs-header-link">
+        <span header-link="getting-started"></span>
+        Getting started
+    </h3>
+    <p>Install the main package:</p>
+    <pre><code class="language-html">
+    <span class="hljs-tag">npm</span> i ngx-ute-material
+    </code></pre>
+
+    <p>Import <code>UteDatepickerTime</code> into your <code>app.module.ts</code>:</p>
+
+    <pre><code class="language-ts">
+    <span class="hljs-tag">import</span> { <span class="hljs-name">NgModule</span> } <span class="hljs-tag">from</span> <span class="hljs-string">'@angular/core'</span>;
+    <span class="hljs-tag">import</span> { <span class="hljs-name">BrowserModule</span> } <span class="hljs-tag">from</span> <span class="hljs-string">'@angular/platform-browser'</span>;
+
+    <span class="hljs-tag">import</span> { <span class="hljs-name">AppRoutingModule</span> } <span class="hljs-tag">from</span> <span class="hljs-string">'./app-routing.module'</span>;
+    <span class="hljs-tag">import</span> { <span class="hljs-name">AppComponent</span> } <span class="hljs-tag">from</span> <span class="hljs-string">'./app.component'</span>;
+    <span class="hljs-tag">import</span> { <span class="hljs-name">UteDatepickerTime</span> } <span class="hljs-tag">from</span> <span class="hljs-string">'ngx-ute-material/datepicker-time'</span>;
+
+    <span class="hljs-string">@</span><span class="hljs-name">NgModule</span>({
+        declarations: [
+            <span class="hljs-name">AppComponent</span>
+        ],
+        imports: [
+            <span class="hljs-name">BrowserModule,</span>
+            <span class="hljs-name">AppRoutingModule,</span>
+            <span class="hljs-name">UteDatepickerTime</span>
+        ],
+        providers: [],
+        bootstrap: [<span class="hljs-name">AppComponent</span>]
+    })
+    <span class="hljs-tag">export class</span> <span class="hljs-name">AppModule</span> {}
+    </code></pre>
+
+    <p>Add component to your html code near <code>mat-datepicker</code>:</p>
+
+    <pre><code class="language-html">
+    <<span class="hljs-tag">mat-form-field</span>>
+        <<span class="hljs-tag">mat-label</span>>Choose a datetime&lt;/<span class="hljs-tag">mat-label</span>>
+        <<span class="hljs-tag">input</span> <span class="hljs-string">matInput</span> <span class="hljs-name">[matDatepicker]</span>="picker" />
+        <<span class="hljs-tag">mat-hint</span>>MM/DD/YYYY, HH:mm:ss&lt;/<span class="hljs-tag">mat-hint</span>>
+        <<span class="hljs-tag">mat-datepicker-toggle</span> <span class="hljs-string">matIconSuffix</span> <span class="hljs-name">[for]</span>="picker">&lt;/<span class="hljs-tag">mat-datepicker-toggle</span>>
+        <<span class="hljs-tag">mat-datepicker</span> #picker></mat-datepicker>
+        <<span class="hljs-tag">ute-datepicker-time</span> <span class="hljs-name">[matDatepicker]</span>="picker">&lt;/<span class="hljs-tag">ute-datepicker-time</span>>
+    &lt;/<span class="hljs-tag">mat-form-field</span>>
+    </code></pre>
+    
+    <h3 id="input-properties" class="docs-header-link">
+        <span header-link="input-properties"></span>
+        Input Properties
+    </h3>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Property</th>
+                <th>Input type</th>
+                <th>Default value</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>desktopStyle</td>
+                <td>string: 'button' | 'wheel'</td>
+                <td>'button'</td>
+                <td>TimePicker visual styles. <code>Wheel</code> - mobile like style with touch interactions. <code>Button</code> - input field with next/pre buttons.</td>
+            </tr>
+            <tr>
+                <td>mobileStyle</td>
+                <td>string: 'button' | 'wheel'</td>
+                <td>'wheel'</td>
+                <td>TimePicker visual styles. <code>Wheel</code> - mobile like style with touch interactions. <code>Button</code> - input field with next/pre buttons.</td>
+            </tr>
+            <tr>
+                <td>infiniteScroll</td>
+                <td>boolean</td>
+                <td>true</td>
+                <td>An infinite scroll (<code>true</code>) means that items can be scrolled in an infinite loop. Otherwise (<code>false</code>), it's a picker bounded by its first and last items.</td>
+            </tr>
+            <tr>
+                <td>visibleItemsCount</td>
+                <td>number: 1 | 3 | 5</td>
+                <td>5</td>
+                <td>How many items are displayed on the wheel/picker. Must be <code>odd</code> so that the selection is in the middle of the wheel. The range restriction is for aesthetics purposes.</td>
+            </tr>
+            <tr>
+                <td>hourFormat</td>
+                <td>number: 12 | 24</td>
+                <td>24</td>
+                <td>Choose between a <code>24-hour</code> and <code>12-hour</code> format. A 12-hour format automatically adds another picker for AM/PM.</td>
+            </tr>
+            <tr>
+                <td>hourStep</td>
+                <td>number: 1 | 2 | 3 | 4</td>
+                <td>1</td>
+                <td>Shows the hour values that are a multiple of the chosen number.</td>
+            </tr>
+            <tr>
+                <td>minuteStep</td>
+                <td>number: 1 | 5 | 10 | 15 | 20 | 30</td>
+                <td>1</td>
+                <td>Shows the minute values that are a multiple of the chosen number. E.g. if you want to restrict the minutes options for quarters of an hour, set the value to 15.</td>
+            </tr>
+            <tr>
+                <td>secondStep</td>
+                <td>number: 1 | 5 | 10 | 15 | 20 | 30</td>
+                <td>1</td>
+                <td>Shows the second values that are a multiple of the chosen number. E.g. if you want to restrict the seconds options for quarters of a minute, set the value to 15.</td>
+            </tr>
+            <tr>
+                <td>decoratorStyle</td>
+                <td>string: 'outline' | 'underline' | 'none'</td>
+                <td>'outline'</td>
+                <td>Adds decoration to the selected values on the pickers. <code>Outline</code> - creates a stroke around the selected values, including <code>AM/PM</code>. <code>Underline</code> - underlines numerical values, excluding <code>AM/PM</code>.</td>
+            </tr>
+            <tr>
+                <td>showSeconds</td>
+                <td>boolean</td>
+                <td>true</td>
+                <td>Adds a picker for seconds.</td>
+            </tr>
+            <tr>
+                <td>showToday</td>
+                <td>boolean</td>
+                <td>true</td>
+                <td>Shows <code>Today</code> button in the bottom action bar.</td>
+            </tr>
+            <tr>
+                <td>showIcon</td>
+                <td>boolean</td>
+                <td>false</td>
+                <td>Displays icons on the buttons in the action bar below.</td>
+            </tr>
+            <tr>
+                <td>showDiviner</td>
+                <td>boolean</td>
+                <td>true</td>
+                <td>Show two dots (<code>:</code>) between pickers.</td>
+            </tr>
+            <tr>
+                <td>customButtons</td>
+                <td>object: { today: "string"; cancel: "string"; apply: "string" } | null</td>
+                <td>null</td>
+                <td>Allows you to insert your own text in the reference button on the action bar below, or hide the text by writing the value <code>''</code></td>
+            </tr>
+            <tr>
+                <td>dynamicTouchUI</td>
+                <td>boolean</td>
+                <td>false</td>
+                <td>Dynamically adds the <code>touchUi</code> to <code>mat-datepicker</code> parameter depending on the current device. Set (<code>false</code>) if you are modifying <code>touchUi</code>.</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h3 id="additional-info" class="docs-header-link">
+        <span header-link="additional-info"></span>
+        Additional Info
+    </h3>
+
+    <ul>
+        <li>If you use <code>mat-datepicker-actions</code>, the module will automatically use your variant instead of the default one.</li>
+        <li>The module supports changing the locale (used in <code>mat-datepicker-actions</code>) for the following languages:</br><code>en | ar | zh | cs | da | fr | de | it | ja | ko | pl | pt | ro | es | sv | uk</code></li>
+        <li>Available uses of <code>min</code> and <code>max</code> options from <code>mat-datepicker</code>. Will be displayed in <code>red</code> on the time pickers.</li>
+    </ul>
+
+    <h3 id="planned-improvements" class="docs-header-link">
+        <span header-link="planned-improvements"></span>
+        Planned Improvements
+    </h3>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Improvement</th>
+                <th>Priority</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>Time for Range Datepicker</td>
+                <td>High</td>
+                <td>Work in Progress</td>
+            </tr>
+            <tr>
+                <td>Timepicker solo module</td>
+                <td>Low</td>
+                <td>Wait</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3 id="sources-and-inspiration" class="docs-header-link">
+        <span header-link="sources-and-inspiration"></span>
+        Sources and inspiration
+    </h3>
+
+    <ul>
+        <li><a href="https://github.com/angular/components" target="_blank" rel="nofollow">Angular Components</a></li>
+        <li><a href="https://github.com/h2qutc/angular-material-components/tree/master" target="_blank" target="_blank"rel="nofollow">Angular-material-components</a></li>
+        <li><a href="https://github.com/eliasab16/timeless-picker" target="_blank" rel="nofollow">Timeless picker</a></li>
+        <li><a href="https://github.com/aGoncharuks/ag-swipe/tree/master" target="_blank" rel="nofollow">AG-Swipe</a></li>
+    </ul>
+</div>
