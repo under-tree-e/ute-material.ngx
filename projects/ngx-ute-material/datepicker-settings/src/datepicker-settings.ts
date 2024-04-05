@@ -1,7 +1,7 @@
 import { formatDate } from "@angular/common";
-import { Directive, Inject, Input } from "@angular/core";
+import { Directive, Inject, Input, inject } from "@angular/core";
 import { DateAdapter, NativeDateAdapter } from "@angular/material/core";
-import { MatDatepicker } from "@angular/material/datepicker";
+import { MatDateRangePicker, MatDatepicker } from "@angular/material/datepicker";
 
 export const UteDateFormat = {
     parse: { dateInput: "input" },
@@ -29,8 +29,21 @@ export class UteDatepickerSettings {
     private nativeDateAdapter: NativeDateAdapter = new NativeDateAdapter();
     private isMoment: boolean = false;
     private copyCurrentAdapter: any;
+    private matDatepicker: any = null;
+    private isRange: boolean = false;
 
-    constructor(@Inject(MatDatepicker) private readonly matDatepicker: any, @Inject(DateAdapter) public dateAdapter: DateAdapter<any>) {
+    constructor(@Inject(DateAdapter) public dateAdapter: DateAdapter<any>) {
+        try {
+            this.matDatepicker = inject(MatDatepicker);
+        } catch {
+            try {
+                this.matDatepicker = inject(MatDateRangePicker);
+                this.isRange = true;
+            } catch {
+                throw "Datepicker not found!";
+            }
+        }
+
         this.isMoment = (this.dateAdapter as any).useUtcForDisplay === undefined ? true : false;
     }
 
@@ -99,13 +112,25 @@ export class UteDatepickerSettings {
                 };
 
                 this.matDatepicker.datepickerInput._dateAdapter = dubAdapter;
-                this.matDatepicker.datepickerInput._dateFormats = UteDateFormat;
+                if (this.isRange) {
+                    this.matDatepicker.datepickerInput._startInput._dateAdapter = dubAdapter;
+                    this.matDatepicker.datepickerInput._startInput._dateFormats = UteDateFormat;
+                    this.matDatepicker.datepickerInput._endInput._dateAdapter = dubAdapter;
+                    this.matDatepicker.datepickerInput._endInput._dateFormats = UteDateFormat;
+                } else {
+                    this.matDatepicker.datepickerInput._dateFormats = UteDateFormat;
+                }
             }
         }
 
         // Refresh current dateinput display
         if (this.matDatepicker.datepickerInput.value && this.format) {
-            this.matDatepicker.datepickerInput.value = this.matDatepicker.datepickerInput._model.selection;
+            if (this.isRange) {
+                this.matDatepicker.datepickerInput.value.start = this.matDatepicker.datepickerInput._model.selection.start;
+                this.matDatepicker.datepickerInput.value.end = this.matDatepicker.datepickerInput._model.selection.end;
+            } else {
+                this.matDatepicker.datepickerInput.value = this.matDatepicker.datepickerInput._model.selection;
+            }
         }
     }
 }

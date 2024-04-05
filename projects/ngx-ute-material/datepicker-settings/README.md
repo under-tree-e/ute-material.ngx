@@ -70,6 +70,7 @@ Add directive `uteDateSettings` to your `mat-datepicker` component:
 -   Custom date format can be used at any `DateAdapter`.
 -   All settings from this module works only with `mat-datepicker` component to which this directive is connected.
 -   Don't forget use specific format syntax [Angular](https://angular.io/api/common/DatePipe#custom-format-options) or [Moment](https://momentjs.com/docs/#/parsing/string/)
+-   `MatDateRange` supported
 
 ## Planned Improvements
 

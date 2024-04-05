@@ -1,6 +1,6 @@
 <div class="datepicker-settings-block">
     <div class="picker-block" [ngClass]="{filtered: !isLoad}">
-        <mat-form-field *ngIf="isLoad">
+        <mat-form-field *ngIf="isLoad && !isRange">
             <mat-label>Choose a datetime</mat-label>
             <input matInput [matDatepicker]="picker" (dateChange)="dateChange($event)" [value]="currentDate" />
             <mat-hint>{{format ? format : 'MM/DD/YYYY'}}</mat-hint>
@@ -16,8 +16,30 @@
                 [weekdaysSymbols]="weekdaysSymbols"
             ></mat-datepicker>
         </mat-form-field>
+        <mat-form-field *ngIf="isLoad && isRange">
+            <mat-label>Choose a datetime</mat-label>
+            <mat-date-range-input matInput [rangePicker]="rangeInput">
+                <input matStartDate #dateRangeStart [(ngModel)]="rangeDate.start" />
+                <input matEndDate #dateRangeEnd [(ngModel)]="rangeDate.end" (dateChange)="dateChange({dateRangeStart, dateRangeEnd})" />
+            </mat-date-range-input>
+            <mat-hint>{{format ? format : 'MM/DD/YYYY'}} – {{format ? format : 'MM/DD/YYYY'}}</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="rangeInput"></mat-datepicker-toggle>
+            <mat-date-range-picker
+                class="date-calendar"
+                #rangeInput
+                uteDateSettings
+                [format]="format"
+                [weekStart]="weekStart"
+                [overlayClass]="overlayClass"
+                [backdropClass]="backdropClass"
+                [contentClass]="contentClass"
+                [weekdaysSymbols]="weekdaysSymbols"
+            ></mat-date-range-picker>
+        </mat-form-field>
     </div>
-    <div class="text">Current Date: {{currentDate}}</div>
+    <div class="text" *ngIf="!isRange">Current Date: {{currentDate}}</div>
+    <div class="text" *ngIf="isRange">Start Date: {{rangeDate.start}}</div>
+    <div class="text" *ngIf="isRange">End Date: {{rangeDate.end}}</div>
 </div>
 
 <div class="datepicker-settings-settings">
@@ -33,6 +55,13 @@
                     <mat-option value="YYYY-MM-dd HH:mm:ss">YYYY-MM-dd HH:mm:ss</mat-option>
                     <mat-option value="MMM dd YYYY">MMM dd YYYY</mat-option>
                     <mat-option value="shortDate">shortDate</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Range Datepicker</mat-label>
+                <mat-select [(ngModel)]="isRange" (selectionChange)="reloadDatepicker()">
+                    <mat-option [value]="false">False</mat-option>
+                    <mat-option [value]="true">True</mat-option>
                 </mat-select>
             </mat-form-field>
         </mat-card-content>
