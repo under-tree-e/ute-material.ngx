@@ -40,11 +40,21 @@ export class DatepickerSettingsComponent {
     public contentClass: string = "";
     public weekdaysSymbols: 1 | 2 | 3 | null = null;
     public currentDate: Date = new Date();
+    public rangeDate: { start: Date; end: Date } = { start: new Date(), end: new Date() };
     public isAction: boolean = false;
     public isLoad: boolean = true;
+    public isRange: boolean = false;
 
     public dateChange(event: any) {
-        this.currentDate = new Date(event.value);
+        if (this.isRange) {
+            let start: Date = event.dateRangeStart.value;
+            let end: Date = event.dateRangeEnd.value;
+            if (end) {
+                this.rangeDate = { start: new Date(start), end: new Date(end) };
+            }
+        } else {
+            this.currentDate = new Date(event.value);
+        }
     }
 
     public toggleActions() {
