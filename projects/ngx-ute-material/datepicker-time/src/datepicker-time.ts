@@ -92,6 +92,7 @@ export class UteDatepickerTime implements OnInit {
     private locales: any = DatepickerTimeLocale;
     private isOpen: boolean = false;
     private isMoment: boolean = false;
+    private subscriptions = new Subscription();
 
     constructor(private _viewContainerRef: ViewContainerRef, private changeDetectorRef: ChangeDetectorRef) {}
 
@@ -130,55 +131,65 @@ export class UteDatepickerTime implements OnInit {
         this.isMoment = this.matDatepicker.datepickerInput._dateAdapter.useUtcForDisplay === undefined ? true : false;
 
         // Create subscriber to detect when locale will be updated
-        this.matDatepicker._dateAdapter.localeChanges.subscribe(() => {
-            this.setLocale();
-        });
+        this.subscriptions.add(
+            this.matDatepicker._dateAdapter.localeChanges.subscribe(() => {
+                this.setLocale();
+            })
+        );
 
         let viewSub: Subscription = null!;
         let changeSub: Subscription = null!;
 
         // Create subscriber to detect when matDatepicker will be opened
-        this.matDatepicker.openedStream.subscribe(() => {
-            this.initPicker(this.matDatepicker.datepickerInput._model.selection);
+        this.subscriptions.add(
+            this.matDatepicker.openedStream.subscribe(() => {
+                this.initPicker(this.matDatepicker.datepickerInput._model.selection);
 
-            // Create subscriber to detect when matCalendar value will be changed
-            changeSub = this.matDatepicker._componentRef.changeDetectorRef.context._model.selectionChanged.subscribe(() => {
-                this.setDate();
-            });
+                // Create subscriber to detect when matCalendar value will be changed
+                this.subscriptions.add(
+                    (changeSub = this.matDatepicker._componentRef.changeDetectorRef.context._model.selectionChanged.subscribe(() => {
+                        this.setDate();
+                    }))
+                );
 
-            // Create subscriber to detect when matDatepicker view will be changed
-            viewSub = this.matDatepicker.viewChanged.subscribe((view: any) => {
-                this.view = view;
-                this.changeDetectorRef.detectChanges();
-            });
+                // Create subscriber to detect when matDatepicker view will be changed
+                viewSub = this.matDatepicker.viewChanged.subscribe((view: any) => {
+                    this.view = view;
+                    this.changeDetectorRef.detectChanges();
+                });
 
-            // Create subscriber to detect when matDatepickerInput will be changed
-            this.matDatepicker.datepickerInput.dateInput.subscribe(() => {
-                let date: Date = this.matDatepicker.datepickerInput.value;
-                try {
-                    if (date.getTime() < this.matDatepicker.datepickerInput.min.getTime()) {
-                        this.matDatepicker.datepickerInput.value = new Date(this.matDatepicker.datepickerInput.min);
-                        this.onToday(new Date(this.matDatepicker.datepickerInput.min));
-                    } else if (date.getTime() > this.matDatepicker.datepickerInput.max.getTime()) {
-                        this.matDatepicker.datepickerInput.value = new Date(this.matDatepicker.datepickerInput.max);
-                        this.onToday(new Date(this.matDatepicker.datepickerInput.max));
-                    }
-                } catch {}
-            });
+                // Create subscriber to detect when matDatepickerInput will be changed
+                this.subscriptions.add(
+                    this.matDatepicker.datepickerInput.dateInput.subscribe(() => {
+                        let date: Date = this.matDatepicker.datepickerInput.value;
+                        try {
+                            if (date.getTime() < this.matDatepicker.datepickerInput.min.getTime()) {
+                                this.matDatepicker.datepickerInput.value = new Date(this.matDatepicker.datepickerInput.min);
+                                this.onToday(new Date(this.matDatepicker.datepickerInput.min));
+                            } else if (date.getTime() > this.matDatepicker.datepickerInput.max.getTime()) {
+                                this.matDatepicker.datepickerInput.value = new Date(this.matDatepicker.datepickerInput.max);
+                                this.onToday(new Date(this.matDatepicker.datepickerInput.max));
+                            }
+                        } catch {}
+                    })
+                );
 
-            setTimeout(() => {
-                this.isOpen = true;
-            }, 250);
-        });
+                setTimeout(() => {
+                    this.isOpen = true;
+                }, 250);
+            })
+        );
 
         // Create subscriber to detect when matDatepicker will be closed
-        this.matDatepicker.closedStream.subscribe(() => {
-            this.view = this.matDatepicker.startView;
+        this.subscriptions.add(
+            this.matDatepicker.closedStream.subscribe(() => {
+                this.view = this.matDatepicker.startView;
 
-            // Remove subscribers
-            changeSub.unsubscribe();
-            viewSub.unsubscribe();
-        });
+                // Remove subscribers
+                changeSub.unsubscribe();
+                viewSub.unsubscribe();
+            })
+        );
 
         if (!this.isMoment && this.matDatepicker.datepickerInput._dateFormats.parse.dateInput != "input") {
             let dateInput: any = { year: "numeric", month: "numeric", day: "numeric", hour12: this.hourFormat === 12 ? true : false, hour: "2-digit", minute: "2-digit" };
@@ -215,6 +226,8 @@ export class UteDatepickerTime implements OnInit {
         if (this._portal && this._portal.isAttached) {
             this._portal?.detach();
         }
+
+        this.subscriptions.unsubscribe();
     }
 
     /**
@@ -236,11 +249,8 @@ export class UteDatepickerTime implements OnInit {
         }
 
         if (this.dynamicTouchUI) {
-            if (this.isMobile()) {
-                if (!this.matDatepicker.touchUi) this.matDatepicker.touchUi = true;
-            } else {
-                if (this.matDatepicker.touchUi) this.matDatepicker.touchUi = false;
-            }
+            const status: boolean = this.isMobile();
+            if (this.matDatepicker.touchUi !== status) this.matDatepicker.touchUi = status;
         }
     }
 
@@ -342,8 +352,9 @@ export class UteDatepickerTime implements OnInit {
             this.locale = this.customButtons;
         } else {
             try {
-                this.locale = this.locales[this.matDatepicker._dateAdapter.locale].split("-")[0];
-            } catch {
+                this.locale = this.locales[this.matDatepicker._dateAdapter.locale.split("-")[0]];
+            } catch (error) {
+                console.error(error);
                 this.locale = this.locales["en"];
             }
         }

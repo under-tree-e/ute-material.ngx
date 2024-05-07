@@ -29,7 +29,7 @@ export class PageSEO {
     }
 
     get desk(): string {
-        return this._title;
+        return this._desk;
     }
 
     set desk(desk: string) {
@@ -43,7 +43,7 @@ export class PageSEO {
     }
 
     get keys(): string {
-        return this._title;
+        return this._keywords;
     }
 
     set keys(keys: string) {

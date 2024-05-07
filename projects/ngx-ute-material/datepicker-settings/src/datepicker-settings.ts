@@ -1,7 +1,8 @@
 import { formatDate } from "@angular/common";
-import { Directive, Inject, Input, inject } from "@angular/core";
+import { Directive, HostListener, Inject, Input, OnInit, inject } from "@angular/core";
 import { DateAdapter, NativeDateAdapter } from "@angular/material/core";
 import { MatDateRangePicker, MatDatepicker } from "@angular/material/datepicker";
+import { Subscription } from "rxjs";
 
 export const UteDateFormat = {
     parse: { dateInput: "input" },
@@ -18,19 +19,21 @@ export const UteDateFormat = {
     standalone: true,
     providers: [NativeDateAdapter],
 })
-export class UteDatepickerSettings {
+export class UteDatepickerSettings implements OnInit {
     @Input() public format: string = "";
     @Input() public weekStart: 0 | 1 = 0;
     @Input() public overlayClass: string = "";
     @Input() public backdropClass: string = "";
     @Input() public contentClass: string = "";
     @Input() public weekdaysSymbols: 1 | 2 | 3 | null = null;
+    @Input() public dynamicTouchUI: boolean = false;
 
     private nativeDateAdapter: NativeDateAdapter = new NativeDateAdapter();
     private isMoment: boolean = false;
     private copyCurrentAdapter: any;
     private matDatepicker: any = null;
     private isRange: boolean = false;
+    private subscriptions = new Subscription();
 
     constructor(@Inject(DateAdapter) public dateAdapter: DateAdapter<any>) {
         try {
@@ -47,6 +50,14 @@ export class UteDatepickerSettings {
         this.isMoment = (this.dateAdapter as any).useUtcForDisplay === undefined ? true : false;
     }
 
+    ngOnInit(): void {
+        this.mobileAdopt();
+    }
+
+    ngOnDestroy(): void {
+        this.subscriptions.unsubscribe();
+    }
+
     ngAfterViewInit() {
         // Generate dublicate for instance
         function duplicateInstance(instance: any): any {
@@ -57,45 +68,51 @@ export class UteDatepickerSettings {
 
         this.copyCurrentAdapter = duplicateInstance(this.dateAdapter);
 
-        this.matDatepicker.openedStream.subscribe(() => {
-            // Custom classes
-            if (this.overlayClass || this.contentClass || this.backdropClass) {
-                let content: HTMLElement = this.matDatepicker._componentRef.location.nativeElement;
+        this.subscriptions.add(
+            this.matDatepicker.openedStream.subscribe(() => {
+                // Custom classes
+                if (this.overlayClass || this.contentClass || this.backdropClass) {
+                    let content: HTMLElement = this.matDatepicker._componentRef.location.nativeElement;
 
-                if (this.contentClass && content) content.classList.add(this.contentClass);
+                    if (this.contentClass && content) content.classList.add(this.contentClass);
 
-                if (this.overlayClass && content) {
-                    content.parentElement!.classList.add(this.overlayClass);
+                    if (this.overlayClass && content) {
+                        content.parentElement!.classList.add(this.overlayClass);
+                    }
+
+                    if (this.backdropClass && content) {
+                        content.parentElement!.parentElement!.parentElement!.children[0].classList.add(this.backdropClass);
+                    }
                 }
 
-                if (this.backdropClass && content) {
-                    content.parentElement!.parentElement!.parentElement!.children[0].classList.add(this.backdropClass);
-                }
-            }
+                // First day of week
+                this.dateAdapter.getFirstDayOfWeek = () => this.weekStart || this.nativeDateAdapter.getFirstDayOfWeek();
 
-            // First day of week
-            this.dateAdapter.getFirstDayOfWeek = () => this.weekStart || this.nativeDateAdapter.getFirstDayOfWeek();
-
-            // Weekdays header format
-            this.dateAdapter.getDayOfWeekNames = (style: "long" | "short" | "narrow") =>
-                this.weekdaysSymbols ? this.nativeDateAdapter.getDayOfWeekNames("long").map((nr: string) => nr.slice(0, this.weekdaysSymbols!)) : this.copyCurrentAdapter.getDayOfWeekNames(style);
-        });
+                // Weekdays header format
+                this.dateAdapter.getDayOfWeekNames = (style: "long" | "short" | "narrow") =>
+                    this.weekdaysSymbols ? this.nativeDateAdapter.getDayOfWeekNames("long").map((nr: string) => nr.slice(0, this.weekdaysSymbols!)) : this.copyCurrentAdapter.getDayOfWeekNames(style);
+            })
+        );
 
         // Restore default values
-        this.matDatepicker.closedStream.subscribe(() => {
-            this.dateAdapter.getFirstDayOfWeek = () => this.nativeDateAdapter.getFirstDayOfWeek();
-            this.dateAdapter.getDayOfWeekNames = () =>
-                this.isMoment ? this.nativeDateAdapter.getDayOfWeekNames("long").map((nr: string) => nr.slice(0, 2)) : this.nativeDateAdapter.getDayOfWeekNames("narrow");
-        });
+        this.subscriptions.add(
+            this.matDatepicker.closedStream.subscribe(() => {
+                this.dateAdapter.getFirstDayOfWeek = () => this.nativeDateAdapter.getFirstDayOfWeek();
+                this.dateAdapter.getDayOfWeekNames = () =>
+                    this.isMoment ? this.nativeDateAdapter.getDayOfWeekNames("long").map((nr: string) => nr.slice(0, 2)) : this.nativeDateAdapter.getDayOfWeekNames("narrow");
+            })
+        );
 
         if (this.isMoment) {
             UteDateFormat.display.dateInput = UteDateFormat.display.dateInput = this.format || "LL";
             this.matDatepicker.datepickerInput._dateFormats = UteDateFormat;
 
-            this.matDatepicker.openedStream.subscribe(() => {
-                UteDateFormat.display.dateInput = UteDateFormat.display.dateInput = this.format || "LL";
-                this.matDatepicker.datepickerInput._dateFormats = UteDateFormat;
-            });
+            this.subscriptions.add(
+                this.matDatepicker.openedStream.subscribe(() => {
+                    UteDateFormat.display.dateInput = UteDateFormat.display.dateInput = this.format || "LL";
+                    this.matDatepicker.datepickerInput._dateFormats = UteDateFormat;
+                })
+            );
         } else {
             if (this.format) {
                 const dubAdapter = duplicateInstance(this.dateAdapter);
@@ -132,5 +149,43 @@ export class UteDatepickerSettings {
                 this.matDatepicker.datepickerInput.value = this.matDatepicker.datepickerInput._model.selection;
             }
         }
+    }
+
+    /**
+     * Datect window resize
+     */
+    @HostListener("window:resize", ["$event"])
+    onResize() {
+        this.mobileAdopt();
+    }
+
+    /**
+     * Get current device type and adopt matDatepicker interface
+     */
+    private mobileAdopt() {
+        if (this.dynamicTouchUI) {
+            const status: boolean = this.isMobile();
+            if (this.matDatepicker.touchUi !== status) this.matDatepicker.touchUi = status;
+        }
+    }
+
+    /**
+     * Check if platfrom or screen is for mobile usage
+     * @returns boolean status
+     */
+    public isMobile(): boolean {
+        if (typeof navigator === "object" && typeof navigator.userAgent === "string") {
+            if (
+                /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(
+                    navigator.userAgent
+                )
+            ) {
+                return true;
+            }
+        }
+        if (screen.orientation.type === ("portrait-primary" || "portrait") && window.screen.width <= 920) {
+            return true;
+        }
+        return false;
     }
 }
