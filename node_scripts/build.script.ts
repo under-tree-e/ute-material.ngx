@@ -55,9 +55,9 @@ export default class BuildScript {
                 await this.command("gh", [`auth`, `login`, `--with-token`, `<`, `.gitToken`]);
                 await this.command("gh", [`release`, `create`, `v${packageJson.version}`, `--target`, `master`, `--generate-notes`]);
 
-                console.log("Publishing app to NPM.JS...");
+                // console.log("Publishing app to NPM.JS...");
 
-                execSync("cd dist/ngx-ute-material/ && npm publish");
+                // execSync("cd dist/ngx-ute-material/ && npm publish");
 
                 console.log("Publishing app to Github.io...");
 
