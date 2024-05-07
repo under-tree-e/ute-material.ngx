@@ -12,10 +12,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   UteDateFormat: () => (/* binding */ UteDateFormat),
 /* harmony export */   UteDatepickerSettings: () => (/* binding */ UteDatepickerSettings)
 /* harmony export */ });
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/common */ 2676);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 4280);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/common */ 2676);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 4280);
 /* harmony import */ var _angular_material_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/material/core */ 2544);
-/* harmony import */ var _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/material/datepicker */ 4392);
+/* harmony import */ var _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/material/datepicker */ 4392);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs */ 8688);
+
 
 
 
@@ -42,21 +44,29 @@ class UteDatepickerSettings {
     this.backdropClass = "";
     this.contentClass = "";
     this.weekdaysSymbols = null;
+    this.dynamicTouchUI = false;
     this.nativeDateAdapter = new _angular_material_core__WEBPACK_IMPORTED_MODULE_0__.NativeDateAdapter();
     this.isMoment = false;
     this.matDatepicker = null;
     this.isRange = false;
+    this.subscriptions = new rxjs__WEBPACK_IMPORTED_MODULE_1__.Subscription();
     try {
-      this.matDatepicker = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_angular_material_datepicker__WEBPACK_IMPORTED_MODULE_2__.MatDatepicker);
+      this.matDatepicker = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_angular_material_datepicker__WEBPACK_IMPORTED_MODULE_3__.MatDatepicker);
     } catch {
       try {
-        this.matDatepicker = (0,_angular_core__WEBPACK_IMPORTED_MODULE_1__.inject)(_angular_material_datepicker__WEBPACK_IMPORTED_MODULE_2__.MatDateRangePicker);
+        this.matDatepicker = (0,_angular_core__WEBPACK_IMPORTED_MODULE_2__.inject)(_angular_material_datepicker__WEBPACK_IMPORTED_MODULE_3__.MatDateRangePicker);
         this.isRange = true;
       } catch {
         throw "Datepicker not found!";
       }
     }
     this.isMoment = this.dateAdapter.useUtcForDisplay === undefined ? true : false;
+  }
+  ngOnInit() {
+    this.mobileAdopt();
+  }
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
   ngAfterViewInit() {
     // Generate dublicate for instance
@@ -66,7 +76,7 @@ class UteDatepickerSettings {
       return instanceCopy;
     }
     this.copyCurrentAdapter = duplicateInstance(this.dateAdapter);
-    this.matDatepicker.openedStream.subscribe(() => {
+    this.subscriptions.add(this.matDatepicker.openedStream.subscribe(() => {
       // Custom classes
       if (this.overlayClass || this.contentClass || this.backdropClass) {
         let content = this.matDatepicker._componentRef.location.nativeElement;
@@ -82,26 +92,26 @@ class UteDatepickerSettings {
       this.dateAdapter.getFirstDayOfWeek = () => this.weekStart || this.nativeDateAdapter.getFirstDayOfWeek();
       // Weekdays header format
       this.dateAdapter.getDayOfWeekNames = style => this.weekdaysSymbols ? this.nativeDateAdapter.getDayOfWeekNames("long").map(nr => nr.slice(0, this.weekdaysSymbols)) : this.copyCurrentAdapter.getDayOfWeekNames(style);
-    });
+    }));
     // Restore default values
-    this.matDatepicker.closedStream.subscribe(() => {
+    this.subscriptions.add(this.matDatepicker.closedStream.subscribe(() => {
       this.dateAdapter.getFirstDayOfWeek = () => this.nativeDateAdapter.getFirstDayOfWeek();
       this.dateAdapter.getDayOfWeekNames = () => this.isMoment ? this.nativeDateAdapter.getDayOfWeekNames("long").map(nr => nr.slice(0, 2)) : this.nativeDateAdapter.getDayOfWeekNames("narrow");
-    });
+    }));
     if (this.isMoment) {
       UteDateFormat.display.dateInput = UteDateFormat.display.dateInput = this.format || "LL";
       this.matDatepicker.datepickerInput._dateFormats = UteDateFormat;
-      this.matDatepicker.openedStream.subscribe(() => {
+      this.subscriptions.add(this.matDatepicker.openedStream.subscribe(() => {
         UteDateFormat.display.dateInput = UteDateFormat.display.dateInput = this.format || "LL";
         this.matDatepicker.datepickerInput._dateFormats = UteDateFormat;
-      });
+      }));
     } else {
       if (this.format) {
         const dubAdapter = duplicateInstance(this.dateAdapter);
         dubAdapter.format = (date, displayFormat) => {
           if (this.format) {
             if (displayFormat === "input") {
-              return (0,_angular_common__WEBPACK_IMPORTED_MODULE_3__.formatDate)(date, this.format, this.dateAdapter.locale);
+              return (0,_angular_common__WEBPACK_IMPORTED_MODULE_4__.formatDate)(date, this.format, this.dateAdapter.locale);
             } else {
               return this.nativeDateAdapter.format(date, displayFormat);
             }
@@ -130,22 +140,60 @@ class UteDatepickerSettings {
       }
     }
   }
+  /**
+   * Datect window resize
+   */
+  onResize() {
+    this.mobileAdopt();
+  }
+  /**
+   * Get current device type and adopt matDatepicker interface
+   */
+  mobileAdopt() {
+    if (this.dynamicTouchUI) {
+      const status = this.isMobile();
+      if (this.matDatepicker.touchUi !== status) this.matDatepicker.touchUi = status;
+    }
+  }
+  /**
+   * Check if platfrom or screen is for mobile usage
+   * @returns boolean status
+   */
+  isMobile() {
+    if (typeof navigator === "object" && typeof navigator.userAgent === "string") {
+      if (/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(navigator.userAgent)) {
+        return true;
+      }
+    }
+    if (screen.orientation.type === ("portrait-primary" || 0) && window.screen.width <= 920) {
+      return true;
+    }
+    return false;
+  }
   static #_ = this.ɵfac = function UteDatepickerSettings_Factory(t) {
-    return new (t || UteDatepickerSettings)(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdirectiveInject"](_angular_material_core__WEBPACK_IMPORTED_MODULE_0__.DateAdapter));
+    return new (t || UteDatepickerSettings)(_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdirectiveInject"](_angular_material_core__WEBPACK_IMPORTED_MODULE_0__.DateAdapter));
   };
-  static #_2 = this.ɵdir = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵdefineDirective"]({
+  static #_2 = this.ɵdir = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵdefineDirective"]({
     type: UteDatepickerSettings,
     selectors: [["", "uteDateSettings", ""]],
+    hostBindings: function UteDatepickerSettings_HostBindings(rf, ctx) {
+      if (rf & 1) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵlistener"]("resize", function UteDatepickerSettings_resize_HostBindingHandler($event) {
+          return ctx.onResize($event);
+        }, false, _angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵresolveWindow"]);
+      }
+    },
     inputs: {
       format: "format",
       weekStart: "weekStart",
       overlayClass: "overlayClass",
       backdropClass: "backdropClass",
       contentClass: "contentClass",
-      weekdaysSymbols: "weekdaysSymbols"
+      weekdaysSymbols: "weekdaysSymbols",
+      dynamicTouchUI: "dynamicTouchUI"
     },
     standalone: true,
-    features: [_angular_core__WEBPACK_IMPORTED_MODULE_1__["ɵɵProvidersFeature"]([_angular_material_core__WEBPACK_IMPORTED_MODULE_0__.NativeDateAdapter])]
+    features: [_angular_core__WEBPACK_IMPORTED_MODULE_2__["ɵɵProvidersFeature"]([_angular_material_core__WEBPACK_IMPORTED_MODULE_0__.NativeDateAdapter])]
   });
 }
 
@@ -444,13 +492,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   UteDatepickerTime: () => (/* binding */ UteDatepickerTime)
 /* harmony export */ });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 4280);
-/* harmony import */ var _angular_cdk_portal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/cdk/portal */ 336);
-/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/common */ 2676);
-/* harmony import */ var _wheel_container_wheel__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./wheel-container/wheel */ 6580);
-/* harmony import */ var _angular_material_button__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/material/button */ 4672);
+/* harmony import */ var _angular_cdk_portal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/cdk/portal */ 336);
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/common */ 2676);
+/* harmony import */ var _wheel_container_wheel__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./wheel-container/wheel */ 6580);
+/* harmony import */ var _angular_material_button__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/material/button */ 4672);
 /* harmony import */ var _datepicker_time_locale__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./datepicker-time-locale */ 1292);
-/* harmony import */ var _angular_material_icon__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/material/icon */ 2328);
-/* harmony import */ var _button_container_button__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./button-container/button */ 1172);
+/* harmony import */ var _angular_material_icon__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/material/icon */ 2328);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ 8688);
+/* harmony import */ var _button_container_button__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./button-container/button */ 1172);
+
 
 
 
@@ -838,6 +888,7 @@ class UteDatepickerTime {
     this.locales = _datepicker_time_locale__WEBPACK_IMPORTED_MODULE_1__.DatepickerTimeLocale;
     this.isOpen = false;
     this.isMoment = false;
+    this.subscriptions = new rxjs__WEBPACK_IMPORTED_MODULE_2__.Subscription();
   }
   /**
    * Generate time value arrays
@@ -869,25 +920,25 @@ class UteDatepickerTime {
     this.view = this.matDatepicker.startView;
     this.isMoment = this.matDatepicker.datepickerInput._dateAdapter.useUtcForDisplay === undefined ? true : false;
     // Create subscriber to detect when locale will be updated
-    this.matDatepicker._dateAdapter.localeChanges.subscribe(() => {
+    this.subscriptions.add(this.matDatepicker._dateAdapter.localeChanges.subscribe(() => {
       this.setLocale();
-    });
+    }));
     let viewSub = null;
     let changeSub = null;
     // Create subscriber to detect when matDatepicker will be opened
-    this.matDatepicker.openedStream.subscribe(() => {
+    this.subscriptions.add(this.matDatepicker.openedStream.subscribe(() => {
       this.initPicker(this.matDatepicker.datepickerInput._model.selection);
       // Create subscriber to detect when matCalendar value will be changed
-      changeSub = this.matDatepicker._componentRef.changeDetectorRef.context._model.selectionChanged.subscribe(() => {
+      this.subscriptions.add(changeSub = this.matDatepicker._componentRef.changeDetectorRef.context._model.selectionChanged.subscribe(() => {
         this.setDate();
-      });
+      }));
       // Create subscriber to detect when matDatepicker view will be changed
       viewSub = this.matDatepicker.viewChanged.subscribe(view => {
         this.view = view;
         this.changeDetectorRef.detectChanges();
       });
       // Create subscriber to detect when matDatepickerInput will be changed
-      this.matDatepicker.datepickerInput.dateInput.subscribe(() => {
+      this.subscriptions.add(this.matDatepicker.datepickerInput.dateInput.subscribe(() => {
         let date = this.matDatepicker.datepickerInput.value;
         try {
           if (date.getTime() < this.matDatepicker.datepickerInput.min.getTime()) {
@@ -898,18 +949,18 @@ class UteDatepickerTime {
             this.onToday(new Date(this.matDatepicker.datepickerInput.max));
           }
         } catch {}
-      });
+      }));
       setTimeout(() => {
         this.isOpen = true;
       }, 250);
-    });
+    }));
     // Create subscriber to detect when matDatepicker will be closed
-    this.matDatepicker.closedStream.subscribe(() => {
+    this.subscriptions.add(this.matDatepicker.closedStream.subscribe(() => {
       this.view = this.matDatepicker.startView;
       // Remove subscribers
       changeSub.unsubscribe();
       viewSub.unsubscribe();
-    });
+    }));
     if (!this.isMoment && this.matDatepicker.datepickerInput._dateFormats.parse.dateInput != "input") {
       let dateInput = {
         year: "numeric",
@@ -934,7 +985,7 @@ class UteDatepickerTime {
       this.matDatepicker.removeActions(this.matDatepicker._actionsPortal);
     }
     // Register actions
-    this._portal = new _angular_cdk_portal__WEBPACK_IMPORTED_MODULE_2__.TemplatePortal(this._template, this._viewContainerRef);
+    this._portal = new _angular_cdk_portal__WEBPACK_IMPORTED_MODULE_3__.TemplatePortal(this._template, this._viewContainerRef);
     this.matDatepicker.registerActions(this._portal);
   }
   /**
@@ -945,6 +996,7 @@ class UteDatepickerTime {
     if (this._portal && this._portal.isAttached) {
       this._portal?.detach();
     }
+    this.subscriptions.unsubscribe();
   }
   /**
    * Datect window resize
@@ -962,11 +1014,8 @@ class UteDatepickerTime {
       this.timeStyle = this.desktopStyle;
     }
     if (this.dynamicTouchUI) {
-      if (this.isMobile()) {
-        if (!this.matDatepicker.touchUi) this.matDatepicker.touchUi = true;
-      } else {
-        if (this.matDatepicker.touchUi) this.matDatepicker.touchUi = false;
-      }
+      const status = this.isMobile();
+      if (this.matDatepicker.touchUi !== status) this.matDatepicker.touchUi = status;
     }
   }
   /**
@@ -1044,8 +1093,9 @@ class UteDatepickerTime {
       this.locale = this.customButtons;
     } else {
       try {
-        this.locale = this.locales[this.matDatepicker._dateAdapter.locale].split("-")[0];
-      } catch {
+        this.locale = this.locales[this.matDatepicker._dateAdapter.locale.split("-")[0]];
+      } catch (error) {
+        console.error(error);
         this.locale = this.locales["en"];
       }
     }
@@ -1161,7 +1211,7 @@ class UteDatepickerTime {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](0, UteDatepickerTime_ng_template_0_Template, 5, 7, "ng-template");
       }
     },
-    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_3__.CommonModule, _angular_common__WEBPACK_IMPORTED_MODULE_3__.NgClass, _angular_common__WEBPACK_IMPORTED_MODULE_3__.NgIf, _wheel_container_wheel__WEBPACK_IMPORTED_MODULE_4__.TimeWheel, _button_container_button__WEBPACK_IMPORTED_MODULE_5__.TimeButton, _angular_cdk_portal__WEBPACK_IMPORTED_MODULE_2__.PortalModule, _angular_cdk_portal__WEBPACK_IMPORTED_MODULE_2__.CdkPortalOutlet, _angular_material_button__WEBPACK_IMPORTED_MODULE_6__.MatButtonModule, _angular_material_button__WEBPACK_IMPORTED_MODULE_6__.MatButton, _angular_material_icon__WEBPACK_IMPORTED_MODULE_7__.MatIconModule, _angular_material_icon__WEBPACK_IMPORTED_MODULE_7__.MatIcon],
+    dependencies: [_angular_common__WEBPACK_IMPORTED_MODULE_4__.CommonModule, _angular_common__WEBPACK_IMPORTED_MODULE_4__.NgClass, _angular_common__WEBPACK_IMPORTED_MODULE_4__.NgIf, _wheel_container_wheel__WEBPACK_IMPORTED_MODULE_5__.TimeWheel, _button_container_button__WEBPACK_IMPORTED_MODULE_6__.TimeButton, _angular_cdk_portal__WEBPACK_IMPORTED_MODULE_3__.PortalModule, _angular_cdk_portal__WEBPACK_IMPORTED_MODULE_3__.CdkPortalOutlet, _angular_material_button__WEBPACK_IMPORTED_MODULE_7__.MatButtonModule, _angular_material_button__WEBPACK_IMPORTED_MODULE_7__.MatButton, _angular_material_icon__WEBPACK_IMPORTED_MODULE_8__.MatIconModule, _angular_material_icon__WEBPACK_IMPORTED_MODULE_8__.MatIcon],
     styles: [".datepicker-time {\n  border-top: 1px solid var(--mat-datepicker-calendar-header-divider-color);\n  box-sizing: border-box;\n  padding: 1rem;\n  margin-bottom: 0.25rem;\n  position: relative;\n  transition: all 0.2s ease-in-out;\n  max-height: 200px;\n}\n.datepicker-time.view {\n  overflow: hidden;\n  max-height: 0;\n  padding: 0;\n  border-width: 0;\n  opacity: 0;\n  margin-bottom: 0;\n}\n.datepicker-time .time-container {\n  position: relative;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 0.75rem;\n  width: -moz-fit-content;\n  width: fit-content;\n  margin: 0 auto;\n  padding: 0 0.75rem;\n}\n.datepicker-time .time-container.test {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%, -50%);\n}\n.datepicker-time .time-container.diviner {\n  gap: 0.25rem;\n}\n.datepicker-time .time-container.outline:after {\n  content: \"\";\n  position: absolute;\n  top: 50%;\n  transform: translateY(-50%);\n  height: 1.875rem;\n  width: 100%;\n  border: 1px solid var(--mat-datepicker-calendar-date-today-outline-color);\n  border-radius: 10px;\n  box-sizing: border-box;\n  pointer-events: none;\n  -webkit-user-select: none;\n          user-select: none;\n}\n.datepicker-time .time-container .diviner {\n  font-weight: bold;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  height: 1.875rem;\n  padding-bottom: 0.125rem;\n  box-sizing: border-box;\n}\n.datepicker-time time-wheel * {\n  font-family: var(--mat-datepicker-calendar-text-font);\n}\n\n.ute-datepicker-actions {\n  display: flex;\n  justify-content: flex-end;\n  align-items: center;\n  padding: 0 8px 8px 8px;\n  gap: 8px;\n}\n.ute-datepicker-actions button:first-child {\n  margin-right: auto;\n}\n\n.mat-datepicker-dialog .mat-datepicker-content-touch .mat-datepicker-content-container {\n  max-height: 100%;\n}\n\n@media (orientation: portrait) {\n  .mat-datepicker-dialog .mat-datepicker-content-touch .mat-datepicker-content-container-with-actions {\n    height: auto;\n  }\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3Byb2plY3RzL25neC11dGUtbWF0ZXJpYWwvZGF0ZXBpY2tlci10aW1lL3NyYy9kYXRlcGlja2VyLXRpbWUuc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNJLHlFQUFBO0VBQ0Esc0JBQUE7RUFDQSxhQUFBO0VBQ0Esc0JBQUE7RUFDQSxrQkFBQTtFQUNBLGdDQUFBO0VBQ0EsaUJBQUE7QUFDSjtBQUFJO0VBQ0ksZ0JBQUE7RUFDQSxhQUFBO0VBQ0EsVUFBQTtFQUNBLGVBQUE7RUFDQSxVQUFBO0VBQ0EsZ0JBQUE7QUFFUjtBQUFJO0VBQ0ksa0JBQUE7RUFDQSxhQUFBO0VBQ0EsbUJBQUE7RUFDQSx1QkFBQTtFQUNBLFlBQUE7RUFDQSx1QkFBQTtFQUFBLGtCQUFBO0VBQ0EsY0FBQTtFQUNBLGtCQUFBO0FBRVI7QUFEUTtFQUNJLGtCQUFBO0VBQ0EsUUFBQTtFQUNBLFNBQUE7RUFDQSxnQ0FBQTtBQUdaO0FBRFE7RUFDSSxZQUFBO0FBR1o7QUFEUTtFQUNJLFdBQUE7RUFDQSxrQkFBQTtFQUNBLFFBQUE7RUFDQSwyQkFBQTtFQUNBLGdCQUFBO0VBQ0EsV0FBQTtFQUNBLHlFQUFBO0VBQ0EsbUJBQUE7RUFDQSxzQkFBQTtFQUNBLG9CQUFBO0VBQ0EseUJBQUE7VUFBQSxpQkFBQTtBQUdaO0FBRFE7RUFDSSxpQkFBQTtFQUNBLGFBQUE7RUFDQSxtQkFBQTtFQUNBLHVCQUFBO0VBQ0EsZ0JBQUE7RUFDQSx3QkFBQTtFQUNBLHNCQUFBO0FBR1o7QUFBSTtFQUNJLHFEQUFBO0FBRVI7O0FBQ0E7RUFDSSxhQUFBO0VBQ0EseUJBQUE7RUFDQSxtQkFBQTtFQUNBLHNCQUFBO0VBQ0EsUUFBQTtBQUVKO0FBQVE7RUFDSSxrQkFBQTtBQUVaOztBQUdBO0VBQ0ksZ0JBQUE7QUFBSjs7QUFHQTtFQUNJO0lBQ0ksWUFBQTtFQUFOO0FBQ0YiLCJzb3VyY2VzQ29udGVudCI6WyIuZGF0ZXBpY2tlci10aW1lIHtcbiAgICBib3JkZXItdG9wOiAxcHggc29saWQgdmFyKC0tbWF0LWRhdGVwaWNrZXItY2FsZW5kYXItaGVhZGVyLWRpdmlkZXItY29sb3IpO1xuICAgIGJveC1zaXppbmc6IGJvcmRlci1ib3g7XG4gICAgcGFkZGluZzogMXJlbTtcbiAgICBtYXJnaW4tYm90dG9tOiAwLjI1cmVtO1xuICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICB0cmFuc2l0aW9uOiBhbGwgMC4ycyBlYXNlLWluLW91dDtcbiAgICBtYXgtaGVpZ2h0OiAyMDBweDtcbiAgICAmLnZpZXcge1xuICAgICAgICBvdmVyZmxvdzogaGlkZGVuO1xuICAgICAgICBtYXgtaGVpZ2h0OiAwO1xuICAgICAgICBwYWRkaW5nOiAwO1xuICAgICAgICBib3JkZXItd2lkdGg6IDA7XG4gICAgICAgIG9wYWNpdHk6IDA7XG4gICAgICAgIG1hcmdpbi1ib3R0b206IDA7XG4gICAgfVxuICAgIC50aW1lLWNvbnRhaW5lciB7XG4gICAgICAgIHBvc2l0aW9uOiByZWxhdGl2ZTtcbiAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIGdhcDogMC43NXJlbTtcbiAgICAgICAgd2lkdGg6IGZpdC1jb250ZW50O1xuICAgICAgICBtYXJnaW46IDAgYXV0bztcbiAgICAgICAgcGFkZGluZzogMCAwLjc1cmVtO1xuICAgICAgICAmLnRlc3Qge1xuICAgICAgICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgICAgICAgdG9wOiA1MCU7XG4gICAgICAgICAgICBsZWZ0OiA1MCU7XG4gICAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZSgtNTAlLCAtNTAlKTtcbiAgICAgICAgfVxuICAgICAgICAmLmRpdmluZXIge1xuICAgICAgICAgICAgZ2FwOiAwLjI1cmVtO1xuICAgICAgICB9XG4gICAgICAgICYub3V0bGluZTphZnRlciB7XG4gICAgICAgICAgICBjb250ZW50OiBcIlwiO1xuICAgICAgICAgICAgcG9zaXRpb246IGFic29sdXRlO1xuICAgICAgICAgICAgdG9wOiA1MCU7XG4gICAgICAgICAgICB0cmFuc2Zvcm06IHRyYW5zbGF0ZVkoLTUwJSk7XG4gICAgICAgICAgICBoZWlnaHQ6IDEuODc1cmVtO1xuICAgICAgICAgICAgd2lkdGg6IDEwMCU7XG4gICAgICAgICAgICBib3JkZXI6IDFweCBzb2xpZCB2YXIoLS1tYXQtZGF0ZXBpY2tlci1jYWxlbmRhci1kYXRlLXRvZGF5LW91dGxpbmUtY29sb3IpO1xuICAgICAgICAgICAgYm9yZGVyLXJhZGl1czogMTBweDtcbiAgICAgICAgICAgIGJveC1zaXppbmc6IGJvcmRlci1ib3g7XG4gICAgICAgICAgICBwb2ludGVyLWV2ZW50czogbm9uZTtcbiAgICAgICAgICAgIHVzZXItc2VsZWN0OiBub25lO1xuICAgICAgICB9XG4gICAgICAgIC5kaXZpbmVyIHtcbiAgICAgICAgICAgIGZvbnQtd2VpZ2h0OiBib2xkO1xuICAgICAgICAgICAgZGlzcGxheTogZmxleDtcbiAgICAgICAgICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gICAgICAgICAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlcjtcbiAgICAgICAgICAgIGhlaWdodDogMS44NzVyZW07XG4gICAgICAgICAgICBwYWRkaW5nLWJvdHRvbTogMC4xMjVyZW07XG4gICAgICAgICAgICBib3gtc2l6aW5nOiBib3JkZXItYm94O1xuICAgICAgICB9XG4gICAgfVxuICAgIHRpbWUtd2hlZWwgKiB7XG4gICAgICAgIGZvbnQtZmFtaWx5OiB2YXIoLS1tYXQtZGF0ZXBpY2tlci1jYWxlbmRhci10ZXh0LWZvbnQpO1xuICAgIH1cbn1cbi51dGUtZGF0ZXBpY2tlci1hY3Rpb25zIHtcbiAgICBkaXNwbGF5OiBmbGV4O1xuICAgIGp1c3RpZnktY29udGVudDogZmxleC1lbmQ7XG4gICAgYWxpZ24taXRlbXM6IGNlbnRlcjtcbiAgICBwYWRkaW5nOiAwIDhweCA4cHggOHB4O1xuICAgIGdhcDogOHB4O1xuICAgIGJ1dHRvbiB7XG4gICAgICAgICY6Zmlyc3QtY2hpbGQge1xuICAgICAgICAgICAgbWFyZ2luLXJpZ2h0OiBhdXRvO1xuICAgICAgICB9XG4gICAgfVxufVxuXG4ubWF0LWRhdGVwaWNrZXItZGlhbG9nIC5tYXQtZGF0ZXBpY2tlci1jb250ZW50LXRvdWNoIC5tYXQtZGF0ZXBpY2tlci1jb250ZW50LWNvbnRhaW5lciB7XG4gICAgbWF4LWhlaWdodDogMTAwJTtcbn1cblxuQG1lZGlhIChvcmllbnRhdGlvbjogcG9ydHJhaXQpIHtcbiAgICAubWF0LWRhdGVwaWNrZXItZGlhbG9nIC5tYXQtZGF0ZXBpY2tlci1jb250ZW50LXRvdWNoIC5tYXQtZGF0ZXBpY2tlci1jb250ZW50LWNvbnRhaW5lci13aXRoLWFjdGlvbnMge1xuICAgICAgICBoZWlnaHQ6IGF1dG87XG4gICAgfVxufVxuIl0sInNvdXJjZVJvb3QiOiIifQ== */"],
     encapsulation: 2,
     changeDetection: 0
@@ -1796,13 +1846,14 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 function DatepickerSettingsComponent_mat_form_field_2_Template(rf, ctx) {
   if (rf & 1) {
     const _r7 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵgetCurrentView"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "mat-form-field")(1, "mat-label");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "Choose a datetime");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "input", 12);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "input", 13);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("dateChange", function DatepickerSettingsComponent_mat_form_field_2_Template_input_dateChange_3_listener($event) {
       _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r7);
       const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
@@ -1812,7 +1863,7 @@ function DatepickerSettingsComponent_mat_form_field_2_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](4, "mat-hint");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](5);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](6, "mat-datepicker-toggle", 13)(7, "mat-datepicker", 14, 15);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](6, "mat-datepicker-toggle", 14)(7, "mat-datepicker", 15, 16);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
@@ -1825,7 +1876,7 @@ function DatepickerSettingsComponent_mat_form_field_2_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("for", _r5);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("format", ctx_r0.format)("weekStart", ctx_r0.weekStart)("overlayClass", ctx_r0.overlayClass)("backdropClass", ctx_r0.backdropClass)("contentClass", ctx_r0.contentClass)("weekdaysSymbols", ctx_r0.weekdaysSymbols);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("format", ctx_r0.format)("weekStart", ctx_r0.weekStart)("overlayClass", ctx_r0.overlayClass)("backdropClass", ctx_r0.backdropClass)("contentClass", ctx_r0.contentClass)("weekdaysSymbols", ctx_r0.weekdaysSymbols)("dynamicTouchUI", ctx_r0.dynamicTouchUI);
   }
 }
 function DatepickerSettingsComponent_mat_form_field_3_Template(rf, ctx) {
@@ -1834,7 +1885,7 @@ function DatepickerSettingsComponent_mat_form_field_3_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "mat-form-field")(1, "mat-label");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](2, "Choose a datetime");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "mat-date-range-input", 16)(4, "input", 17, 18);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](3, "mat-date-range-input", 17)(4, "input", 18, 19);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayListener"]("ngModelChange", function DatepickerSettingsComponent_mat_form_field_3_Template_input_ngModelChange_4_listener($event) {
       _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r12);
       const ctx_r11 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
@@ -1842,7 +1893,7 @@ function DatepickerSettingsComponent_mat_form_field_3_Template(rf, ctx) {
       return _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵresetView"]($event);
     });
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](6, "input", 19, 20);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](6, "input", 20, 21);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayListener"]("ngModelChange", function DatepickerSettingsComponent_mat_form_field_3_Template_input_ngModelChange_6_listener($event) {
       _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵrestoreView"](_r12);
       const ctx_r13 = _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵnextContext"]();
@@ -1863,7 +1914,7 @@ function DatepickerSettingsComponent_mat_form_field_3_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](8, "mat-hint");
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](9);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](10, "mat-datepicker-toggle", 13)(11, "mat-date-range-picker", 21, 22);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelement"](10, "mat-datepicker-toggle", 14)(11, "mat-date-range-picker", 22, 23);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
   }
   if (rf & 2) {
@@ -1880,12 +1931,12 @@ function DatepickerSettingsComponent_mat_form_field_3_Template(rf, ctx) {
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"]();
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("for", _r10);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"]();
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("format", ctx_r1.format)("weekStart", ctx_r1.weekStart)("overlayClass", ctx_r1.overlayClass)("backdropClass", ctx_r1.backdropClass)("contentClass", ctx_r1.contentClass)("weekdaysSymbols", ctx_r1.weekdaysSymbols);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("format", ctx_r1.format)("weekStart", ctx_r1.weekStart)("overlayClass", ctx_r1.overlayClass)("backdropClass", ctx_r1.backdropClass)("contentClass", ctx_r1.contentClass)("weekdaysSymbols", ctx_r1.weekdaysSymbols)("dynamicTouchUI", ctx_r1.dynamicTouchUI);
   }
 }
 function DatepickerSettingsComponent_div_4_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 24);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
   }
@@ -1897,7 +1948,7 @@ function DatepickerSettingsComponent_div_4_Template(rf, ctx) {
 }
 function DatepickerSettingsComponent_div_5_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 24);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
   }
@@ -1909,7 +1960,7 @@ function DatepickerSettingsComponent_div_5_Template(rf, ctx) {
 }
 function DatepickerSettingsComponent_div_6_Template(rf, ctx) {
   if (rf & 1) {
-    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 23);
+    _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 24);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](1);
     _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
   }
@@ -1938,6 +1989,7 @@ class DatepickerSettingsComponent {
     this.isAction = false;
     this.isLoad = true;
     this.isRange = false;
+    this.dynamicTouchUI = false;
   }
   dateChange(event) {
     if (this.isRange) {
@@ -1971,13 +2023,13 @@ class DatepickerSettingsComponent {
     selectors: [["ng-component"]],
     standalone: true,
     features: [_angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵProvidersFeature"]([(0,_angular_material_core__WEBPACK_IMPORTED_MODULE_1__.provideNativeDateAdapter)()]), _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵStandaloneFeature"]],
-    decls: 75,
-    vars: 23,
-    consts: [[1, "datepicker-settings-block"], [1, "picker-block", 3, "ngClass"], [4, "ngIf"], ["class", "text", 4, "ngIf"], [1, "datepicker-settings-settings"], [3, "ngModel", "ngModelChange", "selectionChange"], ["value", ""], ["value", "YYYY-MM-dd HH:mm:ss"], ["value", "MMM dd YYYY"], ["value", "shortDate"], [3, "value"], ["matInput", "", 3, "ngModel", "ngModelChange", "change"], ["matInput", "", 3, "matDatepicker", "value", "dateChange"], ["matIconSuffix", "", 3, "for"], ["uteDateSettings", "", 3, "format", "weekStart", "overlayClass", "backdropClass", "contentClass", "weekdaysSymbols"], ["picker", ""], ["matInput", "", 3, "rangePicker"], ["matStartDate", "", 3, "ngModel", "ngModelChange"], ["dateRangeStart", ""], ["matEndDate", "", 3, "ngModel", "ngModelChange", "dateChange"], ["dateRangeEnd", ""], ["uteDateSettings", "", 1, "date-calendar", 3, "format", "weekStart", "overlayClass", "backdropClass", "contentClass", "weekdaysSymbols"], ["rangeInput", ""], [1, "text"]],
+    decls: 77,
+    vars: 24,
+    consts: [[1, "datepicker-settings-block"], [1, "picker-block", 3, "ngClass"], [4, "ngIf"], ["class", "text", 4, "ngIf"], [1, "datepicker-settings-settings"], [3, "ngModel", "ngModelChange", "selectionChange"], ["value", ""], ["value", "YYYY-MM-dd HH:mm:ss"], ["value", "MMM dd YYYY"], ["value", "shortDate"], [3, "value"], [3, "ngModel", "ngModelChange"], ["matInput", "", 3, "ngModel", "ngModelChange", "change"], ["matInput", "", 3, "matDatepicker", "value", "dateChange"], ["matIconSuffix", "", 3, "for"], ["uteDateSettings", "", 3, "format", "weekStart", "overlayClass", "backdropClass", "contentClass", "weekdaysSymbols", "dynamicTouchUI"], ["picker", ""], ["matInput", "", 3, "rangePicker"], ["matStartDate", "", 3, "ngModel", "ngModelChange"], ["dateRangeStart", ""], ["matEndDate", "", 3, "ngModel", "ngModelChange", "dateChange"], ["dateRangeEnd", ""], ["uteDateSettings", "", 1, "date-calendar", 3, "format", "weekStart", "overlayClass", "backdropClass", "contentClass", "weekdaysSymbols", "dynamicTouchUI"], ["rangeInput", ""], [1, "text"]],
     template: function DatepickerSettingsComponent_Template(rf, ctx) {
       if (rf & 1) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](0, "div", 0)(1, "div", 1);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](2, DatepickerSettingsComponent_mat_form_field_2_Template, 9, 10, "mat-form-field", 2)(3, DatepickerSettingsComponent_mat_form_field_3_Template, 13, 12, "mat-form-field", 2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](2, DatepickerSettingsComponent_mat_form_field_2_Template, 9, 11, "mat-form-field", 2)(3, DatepickerSettingsComponent_mat_form_field_3_Template, 13, 13, "mat-form-field", 2);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtemplate"](4, DatepickerSettingsComponent_div_4_Template, 2, 1, "div", 3)(5, DatepickerSettingsComponent_div_5_Template, 2, 1, "div", 3)(6, DatepickerSettingsComponent_div_6_Template, 2, 1, "div", 3);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
@@ -2023,93 +2075,100 @@ class DatepickerSettingsComponent {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](31, "mat-option", 10);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](32, "True");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()()()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](33, "mat-card")(34, "mat-card-header")(35, "mat-card-title");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](36, "Custom Classes");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](33, "mat-checkbox", 11);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayListener"]("ngModelChange", function DatepickerSettingsComponent_Template_mat_checkbox_ngModelChange_33_listener($event) {
+          _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayBindingSet"](ctx.dynamicTouchUI, $event) || (ctx.dynamicTouchUI = $event);
+          return $event;
+        });
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](34, "Automatic Active TouchUI for Mobile");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](35, "mat-card")(36, "mat-card-header")(37, "mat-card-title");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](38, "Custom Classes");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](37, "mat-card-content")(38, "mat-form-field")(39, "mat-label");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](40, "Custom overlay class");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](39, "mat-card-content")(40, "mat-form-field")(41, "mat-label");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](42, "Custom overlay class");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](41, "input", 11);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayListener"]("ngModelChange", function DatepickerSettingsComponent_Template_input_ngModelChange_41_listener($event) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](43, "input", 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayListener"]("ngModelChange", function DatepickerSettingsComponent_Template_input_ngModelChange_43_listener($event) {
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayBindingSet"](ctx.overlayClass, $event) || (ctx.overlayClass = $event);
           return $event;
         });
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("change", function DatepickerSettingsComponent_Template_input_change_41_listener() {
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("change", function DatepickerSettingsComponent_Template_input_change_43_listener() {
           return ctx.reloadDatepicker();
         });
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](42, "mat-form-field")(43, "mat-label");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](44, "Custom backdrop class");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](44, "mat-form-field")(45, "mat-label");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](46, "Custom backdrop class");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](45, "input", 11);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayListener"]("ngModelChange", function DatepickerSettingsComponent_Template_input_ngModelChange_45_listener($event) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](47, "input", 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayListener"]("ngModelChange", function DatepickerSettingsComponent_Template_input_ngModelChange_47_listener($event) {
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayBindingSet"](ctx.backdropClass, $event) || (ctx.backdropClass = $event);
           return $event;
         });
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("change", function DatepickerSettingsComponent_Template_input_change_45_listener() {
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("change", function DatepickerSettingsComponent_Template_input_change_47_listener() {
           return ctx.reloadDatepicker();
         });
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](46, "mat-form-field")(47, "mat-label");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](48, "Custom content class");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](48, "mat-form-field")(49, "mat-label");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](50, "Custom content class");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](49, "input", 11);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayListener"]("ngModelChange", function DatepickerSettingsComponent_Template_input_ngModelChange_49_listener($event) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](51, "input", 12);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayListener"]("ngModelChange", function DatepickerSettingsComponent_Template_input_ngModelChange_51_listener($event) {
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayBindingSet"](ctx.contentClass, $event) || (ctx.contentClass = $event);
           return $event;
         });
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("change", function DatepickerSettingsComponent_Template_input_change_49_listener() {
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("change", function DatepickerSettingsComponent_Template_input_change_51_listener() {
           return ctx.reloadDatepicker();
         });
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](50, "mat-card")(51, "mat-card-header")(52, "mat-card-title");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](53, "Calendar Style");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](52, "mat-card")(53, "mat-card-header")(54, "mat-card-title");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](55, "Calendar Style");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](54, "mat-card-content")(55, "mat-form-field")(56, "mat-label");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](57, "First day of week");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](56, "mat-card-content")(57, "mat-form-field")(58, "mat-label");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](59, "First day of week");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](58, "mat-select", 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayListener"]("ngModelChange", function DatepickerSettingsComponent_Template_mat_select_ngModelChange_58_listener($event) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](60, "mat-select", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayListener"]("ngModelChange", function DatepickerSettingsComponent_Template_mat_select_ngModelChange_60_listener($event) {
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayBindingSet"](ctx.weekStart, $event) || (ctx.weekStart = $event);
           return $event;
         });
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("selectionChange", function DatepickerSettingsComponent_Template_mat_select_selectionChange_58_listener() {
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("selectionChange", function DatepickerSettingsComponent_Template_mat_select_selectionChange_60_listener() {
           return ctx.reloadDatepicker();
         });
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](59, "mat-option", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](60, "Sunday");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](61, "mat-option", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](62, "Monday");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()()();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](63, "mat-form-field")(64, "mat-label");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](65, "Week day number of symbols");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](62, "Sunday");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](66, "mat-select", 5);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayListener"]("ngModelChange", function DatepickerSettingsComponent_Template_mat_select_ngModelChange_66_listener($event) {
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](63, "mat-option", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](64, "Monday");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()()();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](65, "mat-form-field")(66, "mat-label");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](67, "Week day number of symbols");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](68, "mat-select", 5);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayListener"]("ngModelChange", function DatepickerSettingsComponent_Template_mat_select_ngModelChange_68_listener($event) {
           _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayBindingSet"](ctx.weekdaysSymbols, $event) || (ctx.weekdaysSymbols = $event);
           return $event;
         });
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("selectionChange", function DatepickerSettingsComponent_Template_mat_select_selectionChange_66_listener() {
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵlistener"]("selectionChange", function DatepickerSettingsComponent_Template_mat_select_selectionChange_68_listener() {
           return ctx.reloadDatepicker();
         });
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](67, "mat-option", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](68, "--Default--");
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](69, "mat-option", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](70, "S M T W T F S");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](70, "--Default--");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](71, "mat-option", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](72, "Su Mo Tu We Th Fr Sa");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](72, "S M T W T F S");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](73, "mat-option", 10);
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](74, "Sun Mon Tue Wed Thu Fri Sat");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](74, "Su Mo Tu We Th Fr Sa");
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]();
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementStart"](75, "mat-option", 10);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtext"](76, "Sun Mon Tue Wed Thu Fri Sat");
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵelementEnd"]()()()()()();
       }
       if (rf & 2) {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"]();
-        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngClass", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](21, _c0, !ctx.isLoad));
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngClass", _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵpureFunction1"](22, _c0, !ctx.isLoad));
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"]();
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("ngIf", ctx.isLoad && !ctx.isRange);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"]();
@@ -2128,6 +2187,8 @@ class DatepickerSettingsComponent {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("value", false);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("value", true);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](2);
+        _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayProperty"]("ngModel", ctx.dynamicTouchUI);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](10);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵtwoWayProperty"]("ngModel", ctx.overlayClass);
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵadvance"](4);
@@ -2152,7 +2213,7 @@ class DatepickerSettingsComponent {
         _angular_core__WEBPACK_IMPORTED_MODULE_0__["ɵɵproperty"]("value", 3);
       }
     },
-    dependencies: [_angular_material_form_field__WEBPACK_IMPORTED_MODULE_2__.MatFormFieldModule, _angular_material_form_field__WEBPACK_IMPORTED_MODULE_2__.MatFormField, _angular_material_form_field__WEBPACK_IMPORTED_MODULE_2__.MatLabel, _angular_material_form_field__WEBPACK_IMPORTED_MODULE_2__.MatHint, _angular_material_form_field__WEBPACK_IMPORTED_MODULE_2__.MatSuffix, _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_3__.MatDatepickerModule, _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_3__.MatDatepicker, _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_3__.MatDatepickerInput, _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_3__.MatDatepickerToggle, _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_3__.MatDateRangeInput, _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_3__.MatStartDate, _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_3__.MatEndDate, _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_3__.MatDateRangePicker, projects_ngx_ute_material_datepicker_settings_src_datepicker_settings__WEBPACK_IMPORTED_MODULE_4__.UteDatepickerSettings, _angular_forms__WEBPACK_IMPORTED_MODULE_5__.FormsModule, _angular_forms__WEBPACK_IMPORTED_MODULE_5__.DefaultValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_5__.NgControlStatus, _angular_forms__WEBPACK_IMPORTED_MODULE_5__.NgModel, _angular_forms__WEBPACK_IMPORTED_MODULE_5__.ReactiveFormsModule, _angular_material_input__WEBPACK_IMPORTED_MODULE_6__.MatInputModule, _angular_material_input__WEBPACK_IMPORTED_MODULE_6__.MatInput, _angular_material_select__WEBPACK_IMPORTED_MODULE_7__.MatSelectModule, _angular_material_select__WEBPACK_IMPORTED_MODULE_7__.MatSelect, _angular_material_core__WEBPACK_IMPORTED_MODULE_1__.MatOption, _angular_material_button__WEBPACK_IMPORTED_MODULE_8__.MatButtonModule, _angular_material_checkbox__WEBPACK_IMPORTED_MODULE_9__.MatCheckboxModule, _angular_material_card__WEBPACK_IMPORTED_MODULE_10__.MatCardModule, _angular_material_card__WEBPACK_IMPORTED_MODULE_10__.MatCard, _angular_material_card__WEBPACK_IMPORTED_MODULE_10__.MatCardContent, _angular_material_card__WEBPACK_IMPORTED_MODULE_10__.MatCardHeader, _angular_material_card__WEBPACK_IMPORTED_MODULE_10__.MatCardTitle, _angular_common__WEBPACK_IMPORTED_MODULE_11__.NgIf, _angular_common__WEBPACK_IMPORTED_MODULE_11__.NgClass],
+    dependencies: [_angular_material_form_field__WEBPACK_IMPORTED_MODULE_2__.MatFormFieldModule, _angular_material_form_field__WEBPACK_IMPORTED_MODULE_2__.MatFormField, _angular_material_form_field__WEBPACK_IMPORTED_MODULE_2__.MatLabel, _angular_material_form_field__WEBPACK_IMPORTED_MODULE_2__.MatHint, _angular_material_form_field__WEBPACK_IMPORTED_MODULE_2__.MatSuffix, _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_3__.MatDatepickerModule, _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_3__.MatDatepicker, _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_3__.MatDatepickerInput, _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_3__.MatDatepickerToggle, _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_3__.MatDateRangeInput, _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_3__.MatStartDate, _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_3__.MatEndDate, _angular_material_datepicker__WEBPACK_IMPORTED_MODULE_3__.MatDateRangePicker, projects_ngx_ute_material_datepicker_settings_src_datepicker_settings__WEBPACK_IMPORTED_MODULE_4__.UteDatepickerSettings, _angular_forms__WEBPACK_IMPORTED_MODULE_5__.FormsModule, _angular_forms__WEBPACK_IMPORTED_MODULE_5__.DefaultValueAccessor, _angular_forms__WEBPACK_IMPORTED_MODULE_5__.NgControlStatus, _angular_forms__WEBPACK_IMPORTED_MODULE_5__.NgModel, _angular_forms__WEBPACK_IMPORTED_MODULE_5__.ReactiveFormsModule, _angular_material_input__WEBPACK_IMPORTED_MODULE_6__.MatInputModule, _angular_material_input__WEBPACK_IMPORTED_MODULE_6__.MatInput, _angular_material_select__WEBPACK_IMPORTED_MODULE_7__.MatSelectModule, _angular_material_select__WEBPACK_IMPORTED_MODULE_7__.MatSelect, _angular_material_core__WEBPACK_IMPORTED_MODULE_1__.MatOption, _angular_material_button__WEBPACK_IMPORTED_MODULE_8__.MatButtonModule, _angular_material_checkbox__WEBPACK_IMPORTED_MODULE_9__.MatCheckboxModule, _angular_material_checkbox__WEBPACK_IMPORTED_MODULE_9__.MatCheckbox, _angular_material_card__WEBPACK_IMPORTED_MODULE_10__.MatCardModule, _angular_material_card__WEBPACK_IMPORTED_MODULE_10__.MatCard, _angular_material_card__WEBPACK_IMPORTED_MODULE_10__.MatCardContent, _angular_material_card__WEBPACK_IMPORTED_MODULE_10__.MatCardHeader, _angular_material_card__WEBPACK_IMPORTED_MODULE_10__.MatCardTitle, _angular_common__WEBPACK_IMPORTED_MODULE_11__.NgIf, _angular_common__WEBPACK_IMPORTED_MODULE_11__.NgClass],
     styles: [".datepicker-settings-block[_ngcontent-%COMP%] {\n  display: flex;\n  gap: 1.75rem;\n}\n.datepicker-settings-block[_ngcontent-%COMP%]   .picker-block[_ngcontent-%COMP%] {\n  min-width: 32%;\n  transition: all 0.2s ease-in-out;\n}\n.datepicker-settings-block[_ngcontent-%COMP%]   .picker-block.filtered[_ngcontent-%COMP%] {\n  background-color: rgb(220, 220, 220);\n  opacity: 0.5;\n  border-radius: 8px;\n  height: 4.875rem;\n}\n.datepicker-settings-block[_ngcontent-%COMP%]   .picker-block[_ngcontent-%COMP%]   .mat-mdc-form-field[_ngcontent-%COMP%] {\n  width: 100%;\n}\n.datepicker-settings-block[_ngcontent-%COMP%]   .text[_ngcontent-%COMP%] {\n  background-color: rgba(200, 255, 200, 0.5);\n  border: 2px solid rgb(150, 200, 150);\n  padding: 0.5rem 2rem;\n  border-radius: 8px;\n  width: 100%;\n  height: 3.625rem;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  text-align: center;\n  box-sizing: border-box;\n}\n\n.datepicker-settings-settings[_ngcontent-%COMP%] {\n  display: flex;\n  flex-wrap: wrap;\n  gap: 1rem;\n  justify-content: space-between;\n}\n.datepicker-settings-settings[_ngcontent-%COMP%]   mat-card[_ngcontent-%COMP%] {\n  max-width: 32%;\n  width: 100%;\n  margin-top: 1rem;\n}\n.datepicker-settings-settings[_ngcontent-%COMP%]   mat-card[_ngcontent-%COMP%]   .mat-mdc-card-header[_ngcontent-%COMP%] {\n  justify-content: center;\n}\n.datepicker-settings-settings[_ngcontent-%COMP%]   mat-card[_ngcontent-%COMP%]   .mat-mdc-card-content[_ngcontent-%COMP%] {\n  display: flex;\n  flex-direction: column;\n  gap: 0.25rem;\n}\n\n@media screen and (max-width: 900px) {\n  .datepicker-settings-block[_ngcontent-%COMP%] {\n    flex-wrap: wrap;\n  }\n  .datepicker-settings-block[_ngcontent-%COMP%]   .picker-block[_ngcontent-%COMP%] {\n    width: 100%;\n  }\n  .datepicker-settings-block[_ngcontent-%COMP%]   .text[_ngcontent-%COMP%] {\n    height: auto;\n  }\n  .datepicker-settings-settings[_ngcontent-%COMP%]   mat-card[_ngcontent-%COMP%] {\n    max-width: 100%;\n  }\n}\n/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9hcHAvY29tcG9uZW50cy9kYXRlcGlja2VyLXNldHRpbmdzL2RhdGVwaWNrZXItc2V0dGluZ3Muc2NzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNJLGFBQUE7RUFDQSxZQUFBO0FBQ0o7QUFBSTtFQUNJLGNBQUE7RUFDQSxnQ0FBQTtBQUVSO0FBRFE7RUFDSSxvQ0FBQTtFQUNBLFlBQUE7RUFDQSxrQkFBQTtFQUNBLGdCQUFBO0FBR1o7QUFEUTtFQUNJLFdBQUE7QUFHWjtBQUFJO0VBQ0ksMENBQUE7RUFDQSxvQ0FBQTtFQUNBLG9CQUFBO0VBQ0Esa0JBQUE7RUFDQSxXQUFBO0VBQ0EsZ0JBQUE7RUFDQSxhQUFBO0VBQ0EsbUJBQUE7RUFDQSx1QkFBQTtFQUNBLGtCQUFBO0VBQ0Esc0JBQUE7QUFFUjs7QUFFQTtFQUNJLGFBQUE7RUFDQSxlQUFBO0VBQ0EsU0FBQTtFQUNBLDhCQUFBO0FBQ0o7QUFBSTtFQUNJLGNBQUE7RUFDQSxXQUFBO0VBQ0EsZ0JBQUE7QUFFUjtBQURRO0VBQ0ksdUJBQUE7QUFHWjtBQURRO0VBQ0ksYUFBQTtFQUNBLHNCQUFBO0VBQ0EsWUFBQTtBQUdaOztBQUVBO0VBQ0k7SUFDSSxlQUFBO0VBQ047RUFBTTtJQUNJLFdBQUE7RUFFVjtFQUFNO0lBQ0ksWUFBQTtFQUVWO0VBRU07SUFDSSxlQUFBO0VBQVY7QUFDRiIsInNvdXJjZXNDb250ZW50IjpbIi5kYXRlcGlja2VyLXNldHRpbmdzLWJsb2NrIHtcbiAgICBkaXNwbGF5OiBmbGV4O1xuICAgIGdhcDogMS43NXJlbTtcbiAgICAucGlja2VyLWJsb2NrIHtcbiAgICAgICAgbWluLXdpZHRoOiAzMiU7XG4gICAgICAgIHRyYW5zaXRpb246IGFsbCAwLjJzIGVhc2UtaW4tb3V0O1xuICAgICAgICAmLmZpbHRlcmVkIHtcbiAgICAgICAgICAgIGJhY2tncm91bmQtY29sb3I6IHJnYigyMjAsIDIyMCwgMjIwKTtcbiAgICAgICAgICAgIG9wYWNpdHk6IDAuNTtcbiAgICAgICAgICAgIGJvcmRlci1yYWRpdXM6IDhweDtcbiAgICAgICAgICAgIGhlaWdodDogNC44NzVyZW07XG4gICAgICAgIH1cbiAgICAgICAgLm1hdC1tZGMtZm9ybS1maWVsZCB7XG4gICAgICAgICAgICB3aWR0aDogMTAwJTtcbiAgICAgICAgfVxuICAgIH1cbiAgICAudGV4dCB7XG4gICAgICAgIGJhY2tncm91bmQtY29sb3I6IHJnYmEoMjAwLCAyNTUsIDIwMCwgMC41KTtcbiAgICAgICAgYm9yZGVyOiAycHggc29saWQgcmdiYSgxNTAsIDIwMCwgMTUwLCAxKTtcbiAgICAgICAgcGFkZGluZzogMC41cmVtIDJyZW07XG4gICAgICAgIGJvcmRlci1yYWRpdXM6IDhweDtcbiAgICAgICAgd2lkdGg6IDEwMCU7XG4gICAgICAgIGhlaWdodDogMy42MjVyZW07XG4gICAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICAgIGFsaWduLWl0ZW1zOiBjZW50ZXI7XG4gICAgICAgIGp1c3RpZnktY29udGVudDogY2VudGVyO1xuICAgICAgICB0ZXh0LWFsaWduOiBjZW50ZXI7XG4gICAgICAgIGJveC1zaXppbmc6IGJvcmRlci1ib3g7XG4gICAgfVxufVxuXG4uZGF0ZXBpY2tlci1zZXR0aW5ncy1zZXR0aW5ncyB7XG4gICAgZGlzcGxheTogZmxleDtcbiAgICBmbGV4LXdyYXA6IHdyYXA7XG4gICAgZ2FwOiAxcmVtO1xuICAgIGp1c3RpZnktY29udGVudDogc3BhY2UtYmV0d2VlbjtcbiAgICBtYXQtY2FyZCB7XG4gICAgICAgIG1heC13aWR0aDogMzIlO1xuICAgICAgICB3aWR0aDogMTAwJTtcbiAgICAgICAgbWFyZ2luLXRvcDogMXJlbTtcbiAgICAgICAgLm1hdC1tZGMtY2FyZC1oZWFkZXIge1xuICAgICAgICAgICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gICAgICAgIH1cbiAgICAgICAgLm1hdC1tZGMtY2FyZC1jb250ZW50IHtcbiAgICAgICAgICAgIGRpc3BsYXk6IGZsZXg7XG4gICAgICAgICAgICBmbGV4LWRpcmVjdGlvbjogY29sdW1uO1xuICAgICAgICAgICAgZ2FwOiAwLjI1cmVtO1xuICAgICAgICB9XG4gICAgfVxufVxuXG5AbWVkaWEgc2NyZWVuIGFuZCAobWF4LXdpZHRoOiA5MDBweCkge1xuICAgIC5kYXRlcGlja2VyLXNldHRpbmdzLWJsb2NrIHtcbiAgICAgICAgZmxleC13cmFwOiB3cmFwO1xuICAgICAgICAucGlja2VyLWJsb2NrIHtcbiAgICAgICAgICAgIHdpZHRoOiAxMDAlO1xuICAgICAgICB9XG4gICAgICAgIC50ZXh0IHtcbiAgICAgICAgICAgIGhlaWdodDogYXV0bztcbiAgICAgICAgfVxuICAgIH1cbiAgICAuZGF0ZXBpY2tlci1zZXR0aW5ncy1zZXR0aW5ncyB7XG4gICAgICAgIG1hdC1jYXJkIHtcbiAgICAgICAgICAgIG1heC13aWR0aDogMTAwJTtcbiAgICAgICAgfVxuICAgIH1cbn1cbiJdLCJzb3VyY2VSb290IjoiIn0= */"]
   });
 }
