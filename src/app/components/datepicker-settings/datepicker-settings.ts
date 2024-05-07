@@ -44,6 +44,7 @@ export class DatepickerSettingsComponent {
     public isAction: boolean = false;
     public isLoad: boolean = true;
     public isRange: boolean = false;
+    public dynamicTouchUI: boolean = false;
 
     public dateChange(event: any) {
         if (this.isRange) {

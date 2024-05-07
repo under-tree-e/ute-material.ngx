@@ -14,6 +14,7 @@
                 [backdropClass]="backdropClass"
                 [contentClass]="contentClass"
                 [weekdaysSymbols]="weekdaysSymbols"
+                [dynamicTouchUI]="dynamicTouchUI"
             ></mat-datepicker>
         </mat-form-field>
         <mat-form-field *ngIf="isLoad && isRange">
@@ -34,6 +35,7 @@
                 [backdropClass]="backdropClass"
                 [contentClass]="contentClass"
                 [weekdaysSymbols]="weekdaysSymbols"
+                [dynamicTouchUI]="dynamicTouchUI"
             ></mat-date-range-picker>
         </mat-form-field>
     </div>
@@ -64,6 +66,7 @@
                     <mat-option [value]="true">True</mat-option>
                 </mat-select>
             </mat-form-field>
+            <mat-checkbox [(ngModel)]="dynamicTouchUI">Automatic Active TouchUI for Mobile</mat-checkbox>
         </mat-card-content>
     </mat-card>
     <mat-card>

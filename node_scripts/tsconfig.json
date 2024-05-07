@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist",
+    "target": "es2022",
+    "module": "esnext",
+    "lib": [
+      "es2022",
+    ],
+    "importHelpers": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "removeComments": true,
+    "sourceMap": true,
+    "declaration": true,
+    "moduleResolution": "node",
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  }
+}
