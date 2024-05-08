@@ -73,6 +73,11 @@
             margin-right: 0.25rem;
             vertical-align: bottom;
         }
+        &.recolor {
+            svg {
+                fill: var(--mdc-text-button-label-text-color);
+            }
+        }
     }
 }
 

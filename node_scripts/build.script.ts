@@ -17,15 +17,9 @@ export default class BuildScript {
 
             console.log("Packing app...");
 
-            fs.readFile("README.md", "utf-8", (err, data) => {
-                if (err) throw err;
-
-                const newValue: string = data.replace(/(\/badge\/npm_package-(.{5,10})-red)/g, `/badge/npm_package-${packageJson.version}-red`);
-
-                fs.writeFile("README.md", newValue, "utf-8", (err) => {
-                    if (err) throw err;
-                });
-            });
+            const file = fs.readFileSync("README.md", "utf-8");
+            const newValue: string = file.replace(/(\/badge\/npm_package-(.{5,10})-red)/g, `/badge/npm_package-${packageJson.version}-red`);
+            fs.writeFileSync("README.md", newValue, "utf-8");
 
             fs.copyFileSync(`README.md`, `dist/ngx-ute-material/README.md`);
 
