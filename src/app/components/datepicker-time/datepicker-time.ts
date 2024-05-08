@@ -42,10 +42,8 @@ export class DatepickerTimeComponent {
     public secondStep: 1 | 5 | 10 | 15 | 20 | 30 = 1;
     public decoratorStyle: "outline" | "underline" | "none" = "outline";
     public showSeconds: boolean = true;
-    public showToday: boolean = true;
-    public showIcon: boolean = false;
+    public showToday: boolean = false;
     public showDiviner: boolean = true;
-    public customButtons: { today: ""; cancel: ""; apply: "" } | null = null;
     public dynamicTouchUI: boolean = false;
     public currentDate: Date = new Date();
     public isAction: boolean = false;

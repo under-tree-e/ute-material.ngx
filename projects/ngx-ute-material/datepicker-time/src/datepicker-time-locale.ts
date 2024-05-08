@@ -22,7 +22,7 @@ export const DatepickerTimeLocale = {
     da: {
         today: "I dag",
         cancel: "Afbestille",
-        apply: "ansøge",
+        apply: "Ansøge",
     },
     fr: {
         today: "Aujourd'hui",
@@ -37,7 +37,7 @@ export const DatepickerTimeLocale = {
     it: {
         today: "Oggi",
         cancel: "Annulla",
-        apply: "Fare domanda a",
+        apply: "Applicare",
     },
     ja: {
         today: "今日",

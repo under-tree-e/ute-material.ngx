@@ -55,14 +55,15 @@ Add directive `uteDateSettings` to your `mat-datepicker` component:
 
 ## Input Properties
 
-| Property        |               Input type               | Default value | Description                                                                                            |
-| --------------- | :------------------------------------: | :-----------: | ------------------------------------------------------------------------------------------------------ |
-| format          |                 string                 |      ''       | Custom date format for date input. Support `NativeDateAdaper` and `MomentDateAdapter`.                 |
-| weekStart       |           number:<br>0 \| 1            |       0       | Change first day of week in `MatCalendar`. 0 - Sunday; 1 - Monday.                                     |
-| overlayClass    |                 string                 |      ''       | Add custom class to DOM with class `cdk-overlay-pane`.                                                 |
-| backdropClass   |                 string                 |      ''       | Add custom class to DOM with class `cdk-overlay-backdrop`.                                             |
-| contentClass    |                 string                 |      ''       | Add custom class to DOM with class `mat-datepicker-content`.                                           |
-| weekdaysSymbols | number \| null:<br>1 \| 2 \| 3 \| null |       1       | Change number of symbols in `MatCalendar` table header for days of week. 1 - 'S', 2 - 'Su', 3 - 'Sun'. |
+| Property        |               Input type               | Default value | Description                                                                                                                                 |
+| --------------- | :------------------------------------: | :-----------: | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| format          |                 string                 |      ''       | Custom date format for date input. Support `NativeDateAdaper` and `MomentDateAdapter`.                                                      |
+| weekStart       |           number:<br>0 \| 1            |       0       | Change first day of week in `MatCalendar`. 0 - Sunday; 1 - Monday.                                                                          |
+| overlayClass    |                 string                 |      ''       | Add custom class to DOM with class `cdk-overlay-pane`.                                                                                      |
+| backdropClass   |                 string                 |      ''       | Add custom class to DOM with class `cdk-overlay-backdrop`.                                                                                  |
+| contentClass    |                 string                 |      ''       | Add custom class to DOM with class `mat-datepicker-content`.                                                                                |
+| weekdaysSymbols | number \| null:<br>1 \| 2 \| 3 \| null |       1       | Change number of symbols in `MatCalendar` table header for days of week. 1 - 'S', 2 - 'Su', 3 - 'Sun'.                                      |
+| dynamicTouchUI  |                boolean                 |     false     | Dynamically adds the `touchUi` to `mat-datepicker` parameter depending on the current device. Set (`false`) if you are modifying `touchUi`. |
 
 ## Additional Info
 
