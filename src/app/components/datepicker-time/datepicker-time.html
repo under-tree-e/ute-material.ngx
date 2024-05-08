@@ -24,9 +24,7 @@
                 [decoratorStyle]="decoratorStyle"
                 [showSeconds]="showSeconds"
                 [showToday]="showToday"
-                [showIcon]="showIcon"
                 [showDiviner]="showDiviner"
-                [customButtons]="customButtons"
                 [dynamicTouchUI]="dynamicTouchUI"
             ></ute-datepicker-time>
         </mat-form-field>
@@ -76,7 +74,6 @@
             <button mat-raised-button *ngIf="!isAction" (click)="toggleActions()">Add Custom Actions</button>
             <button mat-raised-button *ngIf="isAction" (click)="toggleActions()">Remove Custom Actions</button>
             <mat-checkbox [(ngModel)]="showToday">Show Today Button</mat-checkbox>
-            <mat-checkbox [(ngModel)]="showIcon">Show Icon in Action Bar</mat-checkbox>
         </mat-card-content>
     </mat-card>
     <mat-card>

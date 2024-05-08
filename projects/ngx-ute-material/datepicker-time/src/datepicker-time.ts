@@ -39,7 +39,7 @@ enum PeriodIndex {
 @Component({
     selector: "ute-datepicker-time",
     standalone: true,
-    imports: [CommonModule, TimeWheel, TimeButton, PortalModule, MatButtonModule, MatIconModule],
+    imports: [CommonModule, TimeWheel, TimeButton, PortalModule, MatButtonModule],
     styleUrls: ["datepicker-time.scss"],
     templateUrl: "datepicker-time.html",
     host: {
@@ -61,10 +61,8 @@ export class UteDatepickerTime implements OnInit {
     @Input() public secondStep: 1 | 5 | 10 | 15 | 20 | 30 = 1;
     @Input() public decoratorStyle: "outline" | "underline" | "none" = "outline";
     @Input() public showSeconds: boolean = true;
-    @Input() public showToday: boolean = true;
-    @Input() public showIcon: boolean = false;
+    @Input() public showToday: boolean = false;
     @Input() public showDiviner: boolean = true;
-    @Input() public customButtons: { today: ""; cancel: ""; apply: "" } | null = null;
     @Input() public dynamicTouchUI: boolean = false;
     @ViewChild(TemplateRef) private _template: TemplateRef<unknown> = {} as TemplateRef<unknown>;
 
@@ -348,15 +346,11 @@ export class UteDatepickerTime implements OnInit {
      * Update UteDatepickerTime locale (buttons locale)
      */
     private setLocale() {
-        if (this.customButtons) {
-            this.locale = this.customButtons;
-        } else {
-            try {
-                this.locale = this.locales[this.matDatepicker._dateAdapter.locale.split("-")[0]];
-            } catch (error) {
-                console.error(error);
-                this.locale = this.locales["en"];
-            }
+        try {
+            this.locale = this.locales[this.matDatepicker._dateAdapter.locale.split("-")[0]];
+        } catch (error) {
+            console.error(error);
+            this.locale = this.locales["en"];
         }
     }
 
