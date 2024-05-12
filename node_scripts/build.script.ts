@@ -1,5 +1,7 @@
 import fs from "fs";
 import packageJson from "../package.json";
+import packageProject from "../projects/ngx-ute-material/package.json";
+import path from "path";
 
 export default class BuildScript {
     constructor(private command: any) {}
@@ -21,6 +23,10 @@ export default class BuildScript {
             fs.writeFileSync("README.md", newValue, "utf-8");
 
             fs.copyFileSync(`README.md`, `dist/ngx-ute-material/README.md`);
+
+            packageProject.version = packageJson.version;
+            let configString: string = JSON.stringify(packageProject, null, 2);
+            fs.writeFileSync(path.resolve(`projects/ngx-ute-material/package.json`), configString);
 
             if (publish) {
                 console.log("Sync git branches...");

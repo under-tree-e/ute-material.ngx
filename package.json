@@ -1,7 +1,34 @@
 {
   "name": "ngx-ute-material",
-  "version": "1.1.5-dev.1",
+  "title": "UTE Material",
+  "version": "1.1.5-dev.2",
   "description": "Ute material addon for Angular material library",
+  "author": {
+    "name": "Under Tree Entertainment",
+    "url": "https://under-tree-e.com",
+    "email": "under-tree-e@outlook.com",
+    "twitter": "under_tree_e",
+    "linkedin": "under-tree-e"
+  },
+  "homepage": "https://github.com/under-tree-e/ute-material.ngx#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/under-tree-e/ute-material.ngx"
+  },
+  "bugs": {
+    "url": "https://github.com/under-tree-e/ute-material.ngx/issues"
+  },
+  "keywords": [
+    "angular",
+    "material",
+    "typescript",
+    "es5",
+    "datepicker-time",
+    "datetime",
+    "timepicker"
+  ],
+  "license": "MIT",
+  "private": false,
   "scripts": {
     "start": "ng serve",
     "watch": "ng build --watch",
@@ -19,29 +46,6 @@
     "patch-update": "npm version patch --no-git-tag-version",
     "dev-update": "npm version prerelease --preid=dev --no-git-tag-version && git add . && git commit -m 'dev_update_'$npm_package_version && git push --all"
   },
-  "keywords": [
-    "angular",
-    "material",
-    "typescript",
-    "es5",
-    "datepicker-time",
-    "datetime",
-    "timepicker"
-  ],
-  "author": {
-    "name": "Under Tree Entertainment",
-    "url": "https://under-tree-e.com"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/under-tree-e/ute-material.ngx"
-  },
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/under-tree-e/ute-material.ngx/issues"
-  },
-  "homepage": "https://github.com/under-tree-e/ute-material.ngx#readme",
-  "private": false,
   "dependencies": {
     "@angular/animations": "^17.2.3",
     "@angular/common": "^17.2.3",
