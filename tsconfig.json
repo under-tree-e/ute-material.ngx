@@ -25,12 +25,6 @@
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
   },
-  "typedocOptions": {
-    "entryPoints": [
-      "./projects/ngx-ute-material/src/public-api.ts"
-    ],
-    "out": "dist/docs"
-  },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
