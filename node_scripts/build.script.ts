@@ -1,6 +1,5 @@
 import fs from "fs";
 import packageJson from "../package.json";
-import { execSync } from "child_process";
 
 export default class BuildScript {
     constructor(private command: any) {}
