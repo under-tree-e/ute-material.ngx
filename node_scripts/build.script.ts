@@ -12,6 +12,9 @@ export default class BuildScript {
             await this.command("cf", ["./dist"]);
 
             packageProject.version = packageJson.version;
+            packageProject.description = packageJson.description;
+            packageProject.keywords = packageJson.keywords;
+            packageProject.license = packageJson.license;
             let configString: string = JSON.stringify(packageProject, null, 2);
             fs.writeFileSync(path.resolve(`projects/ngx-ute-material/package.json`), configString);
 
