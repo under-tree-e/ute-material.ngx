@@ -11,6 +11,10 @@ export default class BuildScript {
 
             await this.command("cf", ["./dist"]);
 
+            packageProject.version = packageJson.version;
+            let configString: string = JSON.stringify(packageProject, null, 2);
+            fs.writeFileSync(path.resolve(`projects/ngx-ute-material/package.json`), configString);
+
             console.log("Building app...");
 
             await this.command("ng", [`build`, `--base-href`, `/ute-material.ngx/`]);
@@ -23,10 +27,6 @@ export default class BuildScript {
             fs.writeFileSync("README.md", newValue, "utf-8");
 
             fs.copyFileSync(`README.md`, `dist/ngx-ute-material/README.md`);
-
-            packageProject.version = packageJson.version;
-            let configString: string = JSON.stringify(packageProject, null, 2);
-            fs.writeFileSync(path.resolve(`projects/ngx-ute-material/package.json`), configString);
 
             if (publish) {
                 console.log("Sync git branches...");
