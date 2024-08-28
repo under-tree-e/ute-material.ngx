@@ -2,7 +2,7 @@
     <div class="picker-block" [ngClass]="{filtered: !isLoad}">
         <mat-form-field *ngIf="isLoad && !isRange">
             <mat-label>Choose a datetime</mat-label>
-            <input matInput [matDatepicker]="picker" (dateChange)="dateChange($event)" [value]="currentDate" (change)="test($event)" />
+            <input matInput [matDatepicker]="picker" (dateChange)="dateChange($event)" [value]="currentDate" />
             <mat-hint>{{format ? format : 'MM/DD/YYYY'}}</mat-hint>
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker

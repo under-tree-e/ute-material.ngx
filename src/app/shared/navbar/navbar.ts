@@ -2,7 +2,6 @@ import { Component } from "@angular/core";
 import { NgIf, NgFor } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { RouterLink, RouterLinkActive } from "@angular/router";
-// import { NavigationFocusService } from "../navigation-focus/navigation-focus.service";
 import { ThemePicker } from "../theme-picker/theme-picker";
 import packageJson from "../../../../package.json";
 
@@ -17,8 +16,4 @@ export class NavBar {
     public version: string = packageJson.version;
     skipLinkHref: string | null | undefined;
     skipLinkHidden = true;
-
-    // constructor(private navigationFocusService: NavigationFocusService) {
-    //     setTimeout(() => (this.skipLinkHref = this.navigationFocusService.getSkipLinkHref()), 100);
-    // }
 }

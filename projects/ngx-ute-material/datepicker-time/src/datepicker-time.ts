@@ -4,7 +4,6 @@ import { CommonModule } from "@angular/common";
 import { TimeWheel } from "./wheel-container/wheel";
 import { MatButtonModule } from "@angular/material/button";
 import { DatepickerTimeLocale } from "./datepicker-time-locale";
-import { MatIconModule } from "@angular/material/icon";
 import { Subscription } from "rxjs";
 import { TimeButton } from "./button-container/button";
 

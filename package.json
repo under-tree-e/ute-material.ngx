@@ -1,7 +1,7 @@
 {
   "name": "ngx-ute-material",
   "title": "UTE Material",
-  "version": "1.1.5-dev.8",
+  "version": "1.2.0",
   "description": "Ute material addon for Angular material library",
   "author": {
     "name": "Under Tree Entertainment",
@@ -74,6 +74,7 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "ng-packagr": "^17.2.1",
     "npm-check-updates": "^16.14.15",
+    "ts-node": "^10.9.2",
     "typescript": "~5.3.3"
   }
 }
