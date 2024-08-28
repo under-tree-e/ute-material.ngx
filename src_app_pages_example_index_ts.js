@@ -101,12 +101,14 @@ class UteDatepickerSettings {
     // Check date string
     this.subscriptions.add(this.matDatepicker.datepickerInput._model.selectionChanged.subscribe(() => {
       const input = this.matDatepicker.datepickerInput._elementRef.nativeElement.value;
-      const timestamp = Date.parse(input);
-      if (isNaN(timestamp)) {
-        let date = new Date(input);
-        const dateRegx = /(\d{2})(\W{0,1})(\d{2})\2(\d{4})(.+)/gi;
-        date = new Date(input.replace(dateRegx, "$3$2$1$2$4$5"));
-        this.matDatepicker.datepickerInput._model.selection = date;
+      if (input) {
+        const timestamp = Date.parse(input);
+        if (isNaN(timestamp)) {
+          let date = new Date(input);
+          const dateRegx = /(\d{2})(\W{0,1})(\d{2})\2(\d{4})(.+)/gi;
+          date = new Date(input.replace(dateRegx, "$3$2$1$2$4$5"));
+          this.matDatepicker.datepickerInput._model.selection = date;
+        }
       }
     }));
     if (this.isMoment) {
