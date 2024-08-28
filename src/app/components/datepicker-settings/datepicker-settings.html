@@ -2,7 +2,7 @@
     <div class="picker-block" [ngClass]="{filtered: !isLoad}">
         <mat-form-field *ngIf="isLoad && !isRange">
             <mat-label>Choose a datetime</mat-label>
-            <input matInput [matDatepicker]="picker" (dateChange)="dateChange($event)" [value]="currentDate" />
+            <input matInput [matDatepicker]="picker" (dateChange)="dateChange($event)" [value]="currentDate" (change)="test($event)" />
             <mat-hint>{{format ? format : 'MM/DD/YYYY'}}</mat-hint>
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker
@@ -55,6 +55,7 @@
                 <mat-select [(ngModel)]="format" (selectionChange)="reloadDatepicker()">
                     <mat-option value="">--Default--</mat-option>
                     <mat-option value="YYYY-MM-dd HH:mm:ss">YYYY-MM-dd HH:mm:ss</mat-option>
+                    <mat-option value="dd.MM.YYYY, HH:mm:ss">dd.MM.YYYY, HH:mm:ss</mat-option>
                     <mat-option value="MMM dd YYYY">MMM dd YYYY</mat-option>
                     <mat-option value="shortDate">shortDate</mat-option>
                 </mat-select>

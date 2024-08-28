@@ -114,9 +114,13 @@ export class UteDatepickerSettings implements OnInit {
                 })
             );
         } else {
+            console.log(this.matDatepicker);
+
             if (this.format) {
                 const dubAdapter = duplicateInstance(this.dateAdapter);
                 dubAdapter.format = (date: Date, displayFormat: Object) => {
+                    console.log(this.matDatepicker.datepickerInput.value);
+                    console.log(this.matDatepicker.datepickerInput._model.selection);
                     if (this.format) {
                         if (displayFormat === "input") {
                             return formatDate(date, this.format, (this.dateAdapter as any).locale);
@@ -141,14 +145,14 @@ export class UteDatepickerSettings implements OnInit {
         }
 
         // Refresh current dateinput display
-        if (this.matDatepicker.datepickerInput.value && this.format) {
-            if (this.isRange) {
-                this.matDatepicker.datepickerInput.value.start = this.matDatepicker.datepickerInput._model.selection.start;
-                this.matDatepicker.datepickerInput.value.end = this.matDatepicker.datepickerInput._model.selection.end;
-            } else {
-                this.matDatepicker.datepickerInput.value = this.matDatepicker.datepickerInput._model.selection;
-            }
-        }
+        // if (this.matDatepicker.datepickerInput.value && this.format) {
+        //     if (this.isRange) {
+        //         this.matDatepicker.datepickerInput.value.start = this.matDatepicker.datepickerInput._model.selection.start;
+        //         this.matDatepicker.datepickerInput.value.end = this.matDatepicker.datepickerInput._model.selection.end;
+        //     } else {
+        //         this.matDatepicker.datepickerInput.value = this.matDatepicker.datepickerInput._model.selection;
+        //     }
+        // }
     }
 
     /**
