@@ -1,7 +1,7 @@
 {
   "name": "ngx-ute-material",
   "title": "UTE Material",
-  "version": "1.2.0",
+  "version": "1.2.1-dev.0",
   "description": "Ute material addon for Angular material library",
   "author": {
     "name": "Under Tree Entertainment",
@@ -39,6 +39,7 @@
     "----": "",
     "build": "npx ts-node node_scripts --build",
     "publish": "npx ts-node node_scripts --publish",
+    "git-publish": "angular-cli-ghpages --dir=dist/ngx-ute-material-app --no-silent",
     "npm-publish": "cd dist/ngx-ute-material/ && npm publish",
     "-----": "",
     "major-update": "npm version major --no-git-tag-version",
@@ -64,7 +65,7 @@
     "@angular/compiler-cli": "^17.2.3",
     "@types/jasmine": "~5.1.4",
     "@types/node": "^20.11.24",
-    "angular-cli-ghpages": "^2.0.0-beta.2",
+    "angular-cli-ghpages": "^2.0.1",
     "clear-folder": "^5.0.0",
     "jasmine-core": "~5.1.2",
     "karma": "~6.4.3",
