@@ -47,6 +47,8 @@ export class DatepickerSettingsComponent {
     public dynamicTouchUI: boolean = false;
 
     public dateChange(event: any) {
+        console.log(event.value);
+
         if (this.isRange) {
             let start: Date = event.dateRangeStart.value;
             let end: Date = event.dateRangeEnd.value;

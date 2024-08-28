@@ -103,6 +103,21 @@ export class UteDatepickerSettings implements OnInit {
             })
         );
 
+        // Check date string
+        this.subscriptions.add(
+            this.matDatepicker.datepickerInput._model.selectionChanged.subscribe(() => {
+                const input: string = this.matDatepicker.datepickerInput._elementRef.nativeElement.value;
+                const timestamp: number = Date.parse(input);
+
+                if (isNaN(timestamp)) {
+                    let date: Date = new Date(input);
+                    const dateRegx: RegExp = /(\d{2})(\W{0,1})(\d{2})\2(\d{4})(.+)/gi;
+                    date = new Date(input.replace(dateRegx, "$3$2$1$2$4$5"));
+                    this.matDatepicker.datepickerInput._model.selection = date;
+                }
+            })
+        );
+
         if (this.isMoment) {
             UteDateFormat.display.dateInput = UteDateFormat.display.dateInput = this.format || "LL";
             this.matDatepicker.datepickerInput._dateFormats = UteDateFormat;
@@ -116,6 +131,7 @@ export class UteDatepickerSettings implements OnInit {
         } else {
             if (this.format) {
                 const dubAdapter = duplicateInstance(this.dateAdapter);
+                dubAdapter.locale = "uk-UA";
                 dubAdapter.format = (date: Date, displayFormat: Object) => {
                     if (this.format) {
                         if (displayFormat === "input") {

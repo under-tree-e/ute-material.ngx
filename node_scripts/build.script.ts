@@ -1,6 +1,7 @@
 import fs from "fs";
 import packageJson from "../package.json";
-import { execSync } from "child_process";
+import packageProject from "../projects/ngx-ute-material/package.json";
+import path from "path";
 
 export default class BuildScript {
     constructor(private command: any) {}
@@ -9,6 +10,13 @@ export default class BuildScript {
             console.log("Prepare folders...");
 
             await this.command("cf", ["./dist"]);
+
+            packageProject.version = packageJson.version;
+            packageProject.description = packageJson.description;
+            packageProject.keywords = packageJson.keywords;
+            packageProject.license = packageJson.license;
+            let configString: string = JSON.stringify(packageProject, null, 2);
+            fs.writeFileSync(path.resolve(`projects/ngx-ute-material/package.json`), configString);
 
             console.log("Building app...");
 
