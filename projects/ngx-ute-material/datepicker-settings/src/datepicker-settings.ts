@@ -110,10 +110,13 @@ export class UteDatepickerSettings implements OnInit {
                 if (input) {
                     const timestamp: number = Date.parse(input);
                     if (isNaN(timestamp)) {
-                        let date: Date = new Date(input);
-                        const dateRegx: RegExp = /(\d{2})(\W{0,1})(\d{2})\2(\d{4})(.+)/gi;
-                        date = new Date(input.replace(dateRegx, "$3$2$1$2$4$5"));
-                        this.matDatepicker.datepickerInput._model.selection = date;
+                        try {
+                            const dateRegx: RegExp = /(\d{2})(\W{0,1})(\d{2})\2(\d{4})?(.+)/gi;
+                            let date: Date = new Date(input.replace(dateRegx, "$3$2$1$2$4$5"));
+                            this.matDatepicker.datepickerInput._model.selection = date;
+                        } catch (error) {
+                            console.error(error);
+                        }
                     }
                 }
             })
