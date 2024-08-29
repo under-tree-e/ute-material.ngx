@@ -104,10 +104,13 @@ class UteDatepickerSettings {
       if (input) {
         const timestamp = Date.parse(input);
         if (isNaN(timestamp)) {
-          let date = new Date(input);
-          const dateRegx = /(\d{2})(\W{0,1})(\d{2})\2(\d{4})(.+)/gi;
-          date = new Date(input.replace(dateRegx, "$3$2$1$2$4$5"));
-          this.matDatepicker.datepickerInput._model.selection = date;
+          try {
+            const dateRegx = /(\d{2})(\W{0,1})(\d{2})\2(\d{4})?(.+)/gi;
+            let date = new Date(input.replace(dateRegx, "$3$2$1$2$4$5"));
+            this.matDatepicker.datepickerInput._model.selection = date;
+          } catch (error) {
+            console.error(error);
+          }
         }
       }
     }));
