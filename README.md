@@ -1,6 +1,6 @@
 # UTE Material for Angular Material
 
-[![](https://img.shields.io/badge/npm_package-1.2.1-red)](https://www.npmjs.com/package/ngx-ute-material) [![](https://img.shields.io/badge/license-MIT-blue)](https://github.com/under-tree-e/ute-material.ngx/blob/master/LICENSE) [![](https://img.shields.io/badge/angular_material-v16--v17-default)](https://www.npmjs.com/package/@angular/material)
+[![](https://img.shields.io/badge/npm_package-1.2.2-red)](https://www.npmjs.com/package/ngx-ute-material) [![](https://img.shields.io/badge/license-MIT-blue)](https://github.com/under-tree-e/ute-material.ngx/blob/master/LICENSE) [![](https://img.shields.io/badge/angular_material-v16--v17-default)](https://www.npmjs.com/package/@angular/material)
 
 The UTE Material library extends default Angular Material components to make the functionality more adaptable to a variety of needs.
 
