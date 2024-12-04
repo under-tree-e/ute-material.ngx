@@ -1,5 +1,5 @@
 import { formatDate } from "@angular/common";
-import { Directive, HostListener, Inject, Input, OnInit, inject } from "@angular/core";
+import { Directive, EventEmitter, HostListener, Inject, Input, OnInit, Output, inject } from "@angular/core";
 import { DateAdapter, NativeDateAdapter } from "@angular/material/core";
 import { MatDateRangePicker, MatDatepicker } from "@angular/material/datepicker";
 import { Subscription } from "rxjs";
@@ -27,6 +27,7 @@ export class UteDatepickerSettings implements OnInit {
     @Input() public contentClass: string = "";
     @Input() public weekdaysSymbols: 1 | 2 | 3 | null = null;
     @Input() public dynamicTouchUI: boolean = false;
+    @Output() public dateSelected: EventEmitter<void> = new EventEmitter<void>();
 
     private nativeDateAdapter: NativeDateAdapter = new NativeDateAdapter();
     private isMoment: boolean = false;
@@ -91,6 +92,13 @@ export class UteDatepickerSettings implements OnInit {
                 // Weekdays header format
                 this.dateAdapter.getDayOfWeekNames = (style: "long" | "short" | "narrow") =>
                     this.weekdaysSymbols ? this.nativeDateAdapter.getDayOfWeekNames("long").map((nr: string) => nr.slice(0, this.weekdaysSymbols!)) : this.copyCurrentAdapter.getDayOfWeekNames(style);
+
+                // Create subscriber to detect when matCalendar value will be changed
+                this.subscriptions.add(
+                    this.matDatepicker._componentRef.changeDetectorRef.context._model.selectionChanged.subscribe((event: any) => {
+                        this.dateSelected.emit(event.selection);
+                    })
+                );
             })
         );
 
