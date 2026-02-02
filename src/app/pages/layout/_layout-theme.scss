@@ -12,11 +12,11 @@
     $nav-background-focus-opacity: if($is-dark-theme, 0.25, 0.08);
 
     .docs-component-viewer-nav-content {
-        border-right: 1px solid mat.get-color-from-palette($foreground, divider);
+        border-right: 1px solid mat.m2-get-color-from-palette($foreground, divider);
 
         h3 {
-            background: mat.get-color-from-palette($primary);
-            color: mat.get-color-from-palette($primary, default-contrast);
+            background: mat.m2-get-color-from-palette($primary);
+            color: mat.m2-get-color-from-palette($primary, default-contrast);
         }
 
         &::-webkit-scrollbar-thumb {
@@ -27,34 +27,34 @@
             color: map.get($foreground, secondary-text);
 
             &:hover {
-                color: mat.get-color-from-palette($foreground, text);
+                color: mat.m2-get-color-from-palette($foreground, text);
             }
 
             &.docs-component-viewer-sidenav-item-selected {
-                background: rgba(mat.get-color-from-palette($primary, default), 0.15);
+                background: rgba(mat.m2-get-color-from-palette($primary, default), 0.15);
 
                 .mdc-list-item__primary-text {
-                    color: color.adjust(mat.get-color-from-palette($primary, default), $lightness: if($is-dark-theme, 25%, 0%));
+                    color: color.adjust(mat.m2-get-color-from-palette($primary, default), $lightness: if($is-dark-theme, 25%, 0%));
                 }
             }
 
             &.docs-component-viewer-sidenav-item-selected:hover {
-                background: rgba(mat.get-color-from-palette($primary, default), 0.3);
+                background: rgba(mat.m2-get-color-from-palette($primary, default), 0.3);
             }
         }
     }
 
     app-viewer {
-        color: mat.get-color-from-palette($foreground, text);
+        color: mat.m2-get-color-from-palette($foreground, text);
         /* TODO(mdc-migration): The following rule targets internal classes of tabs that may no longer apply for the MDC version. */
         .mat-tab-label:focus {
-            color: mat.get-color-from-palette($foreground, text);
+            color: mat.m2-get-color-from-palette($foreground, text);
         }
     }
 
     .docs-component-viewer-tabbed-content,
     .docs-api-h3 {
-        border-bottom: 1px solid mat.get-color-from-palette($foreground, divider);
+        border-bottom: 1px solid mat.m2-get-color-from-palette($foreground, divider);
     }
 
     @media (max-width: constants.$small-breakpoint-width) {

@@ -1,4 +1,18 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, Input, OnInit, TemplateRef, ViewChild, ViewContainerRef, ViewEncapsulation } from "@angular/core";
+import {
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    Component,
+    EventEmitter,
+    HostListener,
+    Input,
+    OnInit,
+    Output,
+    SimpleChanges,
+    TemplateRef,
+    ViewChild,
+    ViewContainerRef,
+    ViewEncapsulation,
+} from "@angular/core";
 import { TemplatePortal, PortalModule } from "@angular/cdk/portal";
 import { CommonModule } from "@angular/common";
 import { TimeWheel } from "./wheel-container/wheel";
@@ -63,6 +77,8 @@ export class UteDatepickerTime implements OnInit {
     @Input() public showToday: boolean = false;
     @Input() public showDiviner: boolean = true;
     @Input() public dynamicTouchUI: boolean = false;
+    @Output() public isc: EventEmitter<boolean> = new EventEmitter<boolean>();
+    @Output() public sac: EventEmitter<boolean> = new EventEmitter<boolean>();
     @ViewChild(TemplateRef) private _template: TemplateRef<unknown> = {} as TemplateRef<unknown>;
 
     public timeStyle: "button" | "wheel" = this.desktopStyle;
@@ -88,10 +104,13 @@ export class UteDatepickerTime implements OnInit {
     private _portal: TemplatePortal = null!;
     private locales: any = DatepickerTimeLocale;
     private isOpen: boolean = false;
-    private isMoment: boolean = false;
+    // private isMoment: boolean = false;
     private subscriptions = new Subscription();
 
-    constructor(private _viewContainerRef: ViewContainerRef, private changeDetectorRef: ChangeDetectorRef) {}
+    constructor(
+        private _viewContainerRef: ViewContainerRef,
+        private changeDetectorRef: ChangeDetectorRef,
+    ) {}
 
     /**
      * Generate time value arrays
@@ -119,19 +138,31 @@ export class UteDatepickerTime implements OnInit {
         this.minuteValues = this.minuteValues.filter((value) => Number(value) % this.minuteStep === 0);
     }
 
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes["hourStep"] || changes["minuteStep"] || changes["secondStep"]) {
+            if (this.hourStep != 1 || this.minuteStep != 1 || this.secondStep != 1) {
+                this.infiniteScroll = false;
+                this.isc.emit(this.infiniteScroll);
+            }
+        } else if (changes["infiniteScroll"] && !changes["infiniteScroll"].previousValue) {
+            this.hourStep = 1;
+            this.minuteStep = 1;
+            this.secondStep = 1;
+            this.sac.emit(true);
+        }
+    }
+
     /**
      * Generate default data and add timepicker as actions to matDatepicker
      */
     ngAfterViewInit() {
         this.view = this.matDatepicker.startView;
 
-        this.isMoment = this.matDatepicker.datepickerInput._dateAdapter.useUtcForDisplay === undefined ? true : false;
-
         // Create subscriber to detect when locale will be updated
         this.subscriptions.add(
             this.matDatepicker._dateAdapter.localeChanges.subscribe(() => {
                 this.setLocale();
-            })
+            }),
         );
 
         let viewSub: Subscription = null!;
@@ -146,7 +177,7 @@ export class UteDatepickerTime implements OnInit {
                 this.subscriptions.add(
                     (changeSub = this.matDatepicker._componentRef.changeDetectorRef.context._model.selectionChanged.subscribe(() => {
                         this.setDate();
-                    }))
+                    })),
                 );
 
                 // Create subscriber to detect when matDatepicker view will be changed
@@ -168,13 +199,13 @@ export class UteDatepickerTime implements OnInit {
                                 this.onToday(new Date(this.matDatepicker.datepickerInput.max));
                             }
                         } catch {}
-                    })
+                    }),
                 );
 
                 setTimeout(() => {
                     this.isOpen = true;
                 }, 250);
-            })
+            }),
         );
 
         // Create subscriber to detect when matDatepicker will be closed
@@ -185,10 +216,10 @@ export class UteDatepickerTime implements OnInit {
                 // Remove subscribers
                 changeSub.unsubscribe();
                 viewSub.unsubscribe();
-            })
+            }),
         );
 
-        if (!this.isMoment && this.matDatepicker.datepickerInput._dateFormats.parse.dateInput != "input") {
+        if (this.matDatepicker.datepickerInput._dateFormats.parse.dateInput != "input") {
             let dateInput: any = { year: "numeric", month: "numeric", day: "numeric", hour12: this.hourFormat === 12 ? true : false, hour: "2-digit", minute: "2-digit" };
             if (this.showSeconds) dateInput.second = "2-digit";
 
@@ -230,7 +261,7 @@ export class UteDatepickerTime implements OnInit {
     /**
      * Datect window resize
      */
-    @HostListener("window:resize", ["$event"])
+    @HostListener("window:resize")
     onResize() {
         this.mobileAdopt();
     }
@@ -270,9 +301,6 @@ export class UteDatepickerTime implements OnInit {
     private setDate(newDate?: Date) {
         try {
             let date: Date = this.matDatepicker._componentRef.changeDetectorRef.context._model.selection;
-            if (this.isMoment) {
-                date = (date as any)._d;
-            }
 
             if (newDate) {
                 this.matDatepicker._componentRef.changeDetectorRef.context._model.selection = newDate;
@@ -284,11 +312,7 @@ export class UteDatepickerTime implements OnInit {
 
                 date.setHours(hours, minutes, seconds);
 
-                if (this.isMoment) {
-                    this.matDatepicker._componentRef.changeDetectorRef.context._model.selection._d = date;
-                } else {
-                    this.matDatepicker._componentRef.changeDetectorRef.context._model.selection = date;
-                }
+                this.matDatepicker._componentRef.changeDetectorRef.context._model.selection = date;
             }
 
             this.blockCheck(TimeType.hours, this.matDatepicker._componentRef.changeDetectorRef.context._model.selection);
@@ -301,8 +325,6 @@ export class UteDatepickerTime implements OnInit {
      * @param date - Current date
      */
     private blockCheck(type: TimeType, date: Date) {
-        if (this.isMoment) date = (date as any)._d;
-
         let min: Date = new Date(this.matDatepicker.datepickerInput.min);
         let max: Date = new Date(this.matDatepicker.datepickerInput.max);
 
@@ -323,7 +345,7 @@ export class UteDatepickerTime implements OnInit {
                         (date.getDate() === min.getDate() && date.getHours() === min.getHours() && parseInt(mv) < min.getMinutes()) ||
                         (date.getDate() === min.getDate() && date.getHours() < min.getHours()) ||
                         (date.getDate() === max.getDate() && date.getHours() === max.getHours() && parseInt(mv) > max.getMinutes()) ||
-                        (date.getDate() === max.getDate() && date.getHours() > max.getHours())
+                        (date.getDate() === max.getDate() && date.getHours() > max.getHours()),
                 );
                 if (this.showSeconds) this.blockCheck(TimeType.seconds, date);
                 break;
@@ -335,7 +357,7 @@ export class UteDatepickerTime implements OnInit {
                         (date.getDate() === min.getDate() && date.getHours() === min.getHours() && date.getMinutes() === min.getMinutes() && parseInt(sv) < min.getSeconds()) ||
                         (date.getDate() === max.getDate() && date.getHours() > max.getHours()) ||
                         (date.getDate() === max.getDate() && date.getHours() === max.getHours() && date.getMinutes() > max.getMinutes()) ||
-                        (date.getDate() === max.getDate() && date.getHours() === max.getHours() && date.getMinutes() === max.getMinutes() && parseInt(sv) > max.getSeconds())
+                        (date.getDate() === max.getDate() && date.getHours() === max.getHours() && date.getMinutes() === max.getMinutes() && parseInt(sv) > max.getSeconds()),
                 );
                 break;
         }
@@ -389,13 +411,13 @@ export class UteDatepickerTime implements OnInit {
         if (typeof navigator === "object" && typeof navigator.userAgent === "string") {
             if (
                 /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(
-                    navigator.userAgent
+                    navigator.userAgent,
                 )
             ) {
                 return true;
             }
         }
-        if (screen.orientation.type === ("portrait-primary" || "portrait") && window.screen.width <= 920) {
+        if (screen.orientation.type === "portrait-primary" && window.screen.width <= 920) {
             return true;
         }
         return false;

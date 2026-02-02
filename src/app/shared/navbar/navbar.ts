@@ -1,7 +1,6 @@
 import { Component } from "@angular/core";
-import { NgIf, NgFor } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
-import { RouterLink, RouterLinkActive } from "@angular/router";
+import { RouterLink } from "@angular/router";
 import { ThemePicker } from "../theme-picker/theme-picker";
 import packageJson from "../../../../package.json";
 
@@ -10,7 +9,7 @@ import packageJson from "../../../../package.json";
     templateUrl: "./navbar.html",
     styleUrls: ["./navbar.scss"],
     standalone: true,
-    imports: [NgIf, MatButtonModule, RouterLink, NgFor, RouterLinkActive, ThemePicker],
+    imports: [MatButtonModule, RouterLink, ThemePicker],
 })
 export class NavBar {
     public version: string = packageJson.version;

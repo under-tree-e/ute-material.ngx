@@ -1,4 +1,3 @@
-import { DatePipe } from "@angular/common";
 import { Component } from "@angular/core";
 import packageJson from "../../../../projects/ngx-ute-material/package.json";
 
@@ -7,7 +6,7 @@ import packageJson from "../../../../projects/ngx-ute-material/package.json";
     templateUrl: "footer.html",
     styleUrls: ["footer.scss"],
     standalone: true,
-    imports: [DatePipe],
+    imports: [],
 })
 export class Footer {
     public year: number = new Date().getFullYear();

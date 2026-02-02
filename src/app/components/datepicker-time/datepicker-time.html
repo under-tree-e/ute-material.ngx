@@ -1,15 +1,18 @@
 <div class="datepicker-time-block">
     <div class="picker-block" [ngClass]="{filtered: !isLoad}">
-        <mat-form-field *ngIf="isLoad">
+        @if(isLoad){
+        <mat-form-field>
             <mat-label>Choose a datetime</mat-label>
             <input matInput [matDatepicker]="picker" (dateChange)="dateChange($event)" [value]="currentDate" />
             <mat-hint>MM/DD/YYYY, HH:mm:ss</mat-hint>
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker>
-                <mat-datepicker-actions *ngIf="isAction">
+                @if(isAction){
+                <mat-datepicker-actions>
                     <button mat-button matDatepickerCancel>Cancel</button>
                     <button mat-raised-button color="primary" matDatepickerApply>Apply</button>
                 </mat-datepicker-actions>
+                }
             </mat-datepicker>
             <ute-datepicker-time
                 [matDatepicker]="picker"
@@ -26,8 +29,11 @@
                 [showToday]="showToday"
                 [showDiviner]="showDiviner"
                 [dynamicTouchUI]="dynamicTouchUI"
+                (isc)="infiniteScroll = false; onUpdate()"
+                (sac)="hourStep = 1; minuteStep = 1; secondStep = 1; onUpdate()"
             ></ute-datepicker-time>
         </mat-form-field>
+        }
     </div>
     <div class="text">Current Date: {{currentDate}}</div>
 </div>
@@ -47,7 +53,7 @@
             </mat-form-field>
             <mat-form-field>
                 <mat-label>Time Style for Mobile</mat-label>
-                <mat-select [(ngModel)]="mobileStyle">
+                <mat-select [(ngModel)]="mobileStyle" (selectionChange)="reloadDatepicker()">
                     <mat-option value="button">Button</mat-option>
                     <mat-option value="wheel">Wheel</mat-option>
                 </mat-select>
@@ -71,8 +77,11 @@
             <mat-card-title>Action Bar Settings</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-            <button mat-raised-button *ngIf="!isAction" (click)="toggleActions()">Add Custom Actions</button>
-            <button mat-raised-button *ngIf="isAction" (click)="toggleActions()">Remove Custom Actions</button>
+            @if(!isAction){
+            <button mat-raised-button (click)="toggleActions()">Add Custom Actions</button>
+            }@else {
+            <button mat-raised-button (click)="toggleActions()">Remove Custom Actions</button>
+            }
             <mat-checkbox [(ngModel)]="showToday">Show Today Button</mat-checkbox>
         </mat-card-content>
     </mat-card>
@@ -91,7 +100,7 @@
             </mat-form-field>
             <mat-form-field>
                 <mat-label>Hour Format 12/24</mat-label>
-                <mat-select [(ngModel)]="hourFormat">
+                <mat-select [(ngModel)]="hourFormat" (selectionChange)="reloadDatepicker()">
                     <mat-option [value]="24">24</mat-option>
                     <mat-option [value]="12">12</mat-option>
                 </mat-select>
@@ -118,7 +127,7 @@
             </mat-form-field>
             <mat-form-field>
                 <mat-label>Step for Second Picker</mat-label>
-                <mat-select [(ngModel)]="minuteStep" (selectionChange)="reloadDatepicker()">
+                <mat-select [(ngModel)]="secondStep" (selectionChange)="reloadDatepicker()">
                     <mat-option [value]="1">1</mat-option>
                     <mat-option [value]="5">5</mat-option>
                     <mat-option [value]="10">10</mat-option>

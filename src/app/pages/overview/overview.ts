@@ -1,9 +1,9 @@
-import { ApplicationRef, ChangeDetectorRef, Component, ComponentFactoryResolver, ElementRef, Injector, OnInit, SecurityContext, ViewChild, ViewContainerRef, ViewEncapsulation } from "@angular/core";
+import { ApplicationRef, ChangeDetectorRef, Component, ElementRef, Injector, OnInit, SecurityContext, ViewChild, ViewContainerRef, ViewEncapsulation } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { DomSanitizer } from "@angular/platform-browser";
 import { DocFetcher } from "src/app/shared/doc-fetcher/doc-fetcher";
 import { PageItem } from "src/app/shared/page-manager/page-manager";
-import { AsyncPipe, NgIf } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { TableOfContents } from "src/app/shared/table-of-contents/table-of-contents";
 import { Observable, map } from "rxjs";
 import { BreakpointObserver } from "@angular/cdk/layout";
@@ -16,7 +16,7 @@ import { CodeParser } from "src/app/shared/code-parser/code-parser";
     templateUrl: "./overview.html",
     encapsulation: ViewEncapsulation.None,
     standalone: true,
-    imports: [NgIf, TableOfContents, AsyncPipe],
+    imports: [TableOfContents, AsyncPipe],
 })
 export class Overview implements OnInit {
     public pageItem: PageItem | undefined;
@@ -31,19 +31,18 @@ export class Overview implements OnInit {
         private appRef: ApplicationRef,
         public elementRef: ElementRef,
         private domSanitizer: DomSanitizer,
-        private componentFactoryResolver: ComponentFactoryResolver,
         private viewContainerRef: ViewContainerRef,
         private injector: Injector,
         private docFetcher: DocFetcher,
         private route: ActivatedRoute,
         private breakpointObserver: BreakpointObserver,
-        private changeDetectorRef: ChangeDetectorRef
+        private changeDetectorRef: ChangeDetectorRef,
     ) {
-        this.showToc = breakpointObserver.observe("(max-width: 1200px)").pipe(
+        this.showToc = this.breakpointObserver.observe("(max-width: 1200px)").pipe(
             map((result) => {
                 this.changeDetectorRef.detectChanges();
                 return !result.matches;
-            })
+            }),
         );
     }
 
@@ -103,7 +102,7 @@ export class Overview implements OnInit {
         const exampleElements = this.elementRef.nativeElement.querySelectorAll(`span[header-link]`);
 
         [...exampleElements].forEach((element: Element) => {
-            const portalHost = new DomPortalOutlet(element, this.componentFactoryResolver, this.appRef, this.injector);
+            const portalHost = new DomPortalOutlet(element, this.appRef, this.injector);
             const examplePortal = new ComponentPortal(HeaderLink, this.viewContainerRef);
             const exampleViewer = portalHost.attach(examplePortal);
 
@@ -120,7 +119,7 @@ export class Overview implements OnInit {
             exampleViewerDiv.classList.add("docs-example-viewer-source");
             element.parentElement!.parentNode!.replaceChild(exampleViewerDiv, element.parentElement!);
 
-            const portalHost = new DomPortalOutlet(exampleViewerDiv, this.componentFactoryResolver, this.appRef, this.injector);
+            const portalHost = new DomPortalOutlet(exampleViewerDiv, this.appRef, this.injector);
             const examplePortal = new ComponentPortal(CodeParser, this.viewContainerRef);
             const exampleViewer = portalHost.attach(examplePortal);
 

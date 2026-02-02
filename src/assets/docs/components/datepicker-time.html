@@ -80,7 +80,7 @@
                 <td>infiniteScroll</td>
                 <td>boolean</td>
                 <td>true</td>
-                <td>An infinite scroll (<code>true</code>) means that items can be scrolled in an infinite loop. Otherwise (<code>false</code>), it's a picker bounded by its first and last items.</td>
+                <td>An infinite scroll (<code>true</code>) means that items can be scrolled in an infinite loop. Otherwise (<code>false</code>), it's a picker bounded by its first and last items. NOTE: This property automatic change the value of <code>hourStep</code>, <code>minuteStep</code> and <code>secondStep</code> to <code>1</code>.</td>
             </tr>
             <tr>
                 <td>visibleItemsCount</td>
@@ -98,19 +98,19 @@
                 <td>hourStep</td>
                 <td>number: 1 | 2 | 3 | 4</td>
                 <td>1</td>
-                <td>Shows the hour values that are a multiple of the chosen number.</td>
+                <td>Shows the hour values that are a multiple of the chosen number. NOTE: This property automatic change the value of <code>infiniteScroll</code> to <code>false</code>.</td>
             </tr>
             <tr>
                 <td>minuteStep</td>
                 <td>number: 1 | 5 | 10 | 15 | 20 | 30</td>
                 <td>1</td>
-                <td>Shows the minute values that are a multiple of the chosen number. E.g. if you want to restrict the minutes options for quarters of an hour, set the value to 15.</td>
+                <td>Shows the minute values that are a multiple of the chosen number. E.g. if you want to restrict the minutes options for quarters of an hour, set the value to 15. NOTE: This property automatic change the value of <code>infiniteScroll</code> to <code>false</code>.</td>
             </tr>
             <tr>
                 <td>secondStep</td>
                 <td>number: 1 | 5 | 10 | 15 | 20 | 30</td>
                 <td>1</td>
-                <td>Shows the second values that are a multiple of the chosen number. E.g. if you want to restrict the seconds options for quarters of a minute, set the value to 15.</td>
+                <td>Shows the second values that are a multiple of the chosen number. E.g. if you want to restrict the seconds options for quarters of a minute, set the value to 15. NOTE: This property automatic change the value of <code>infiniteScroll</code> to <code>false</code>.</td>
             </tr>
             <tr>
                 <td>decoratorStyle</td>
@@ -141,6 +141,31 @@
                 <td>boolean</td>
                 <td>false</td>
                 <td>Dynamically adds the <code>touchUi</code> to <code>mat-datepicker</code> parameter depending on the current device. Set (<code>false</code>) if you are modifying <code>touchUi</code>.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3 id="output-functions" class="docs-header-link">
+        <span header-link="output-functions"></span>
+        Output Functions
+    </h3>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Property</th>
+                <th>Output type</th>
+                <th>Description</th>
+            </tr>
+            <tr>
+                <td>isc</td>
+                <td>boolean: true</td>
+                <td>Triggered when the "hourStep", "minuteStep" or "secondStep" values are changed and not equal <code>1</code>. Return information that "infiniteScroll" value is changed to <code>false</code>.</td>
+            </tr>
+            <tr>
+                <td>sac</td>
+                <td>boolean: true</td>
+                <td>Triggered when the "infiniteScroll" value are changed to <code>true</code>. Return information that "hourStep", "minuteStep" or "secondStep" value is changed to <code>1</code>.</td>
             </tr>
         </tbody>
     </table>

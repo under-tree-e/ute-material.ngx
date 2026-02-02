@@ -1,15 +1,14 @@
-import { Component } from "@angular/core";
-import { provideNativeDateAdapter } from "@angular/material/core";
-import { MatDatepickerModule } from "@angular/material/datepicker";
-import { MatFormFieldModule } from "@angular/material/form-field";
+import { ChangeDetectorRef, Component } from "@angular/core";
 import { UteDatepickerSettings } from "projects/ngx-ute-material/datepicker-settings/src/datepicker-settings";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { NgClass } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
-import { MatSelectModule } from "@angular/material/select";
-import { MatButtonModule } from "@angular/material/button";
-import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatCardModule } from "@angular/material/card";
-import { NgClass, NgIf } from "@angular/common";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatButtonModule } from "@angular/material/button";
+import { MatSelectModule } from "@angular/material/select";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatFormFieldModule } from "@angular/material/form-field";
 
 @Component({
     templateUrl: "./datepicker-settings.html",
@@ -26,11 +25,9 @@ import { NgClass, NgIf } from "@angular/common";
         MatButtonModule,
         MatCheckboxModule,
         MatCardModule,
-        NgIf,
         NgClass,
         MatInputModule,
     ],
-    providers: [provideNativeDateAdapter()],
 })
 export class DatepickerSettingsComponent {
     public format: string = "";
@@ -45,6 +42,8 @@ export class DatepickerSettingsComponent {
     public isLoad: boolean = true;
     public isRange: boolean = false;
     public dynamicTouchUI: boolean = false;
+
+    constructor(private readonly cdf: ChangeDetectorRef) {}
 
     public dateChange(event: any) {
         console.log(event.value);
@@ -69,6 +68,9 @@ export class DatepickerSettingsComponent {
         this.isLoad = false;
         setTimeout(() => {
             this.isLoad = true;
+            setTimeout(() => {
+                this.cdf.detectChanges();
+            }, 0);
         }, 250);
     }
 }

@@ -1,6 +1,6 @@
 import { Injectable, Type } from "@angular/core";
-import { DatepickerTimeComponent } from "./datepicker-time";
-import { DatepickerSettingsComponent } from "./datepicker-settings";
+import { DatepickerTimeComponent } from "./datepicker-time/datepicker-time";
+import { DatepickerSettingsComponent } from "./datepicker-settings/datepicker-settings";
 
 @Injectable({ providedIn: "root" })
 export class ComponentsService {

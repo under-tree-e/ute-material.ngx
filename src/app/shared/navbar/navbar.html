@@ -1,7 +1,9 @@
 <nav class="docs-navbar-header" aria-label="Top Toolbar">
-    <div class="skip-link-wrapper" [class.cdk-visually-hidden]="skipLinkHidden" *ngIf="skipLinkHref">
+    @if(skipLinkHref){
+    <div class="skip-link-wrapper" [class.cdk-visually-hidden]="skipLinkHidden">
         <a mat-raised-button [href]="skipLinkHref" (focus)="skipLinkHidden = false" (blur)="skipLinkHidden = true" color="accent"> Skip to main content </a>
     </div>
+    }
     <a mat-button class="docs-button docs-navbar-hide-small" routerLink="/" aria-label="UTE Material">
         <img class="logo" matButtonIcon src="assets/img/homepage/ute-white-transparent.svg" alt="ute" aria-hidden="true" />
         <span>UTE Material</span>

@@ -1,6 +1,7 @@
 <div class="datepicker-settings-block">
     <div class="picker-block" [ngClass]="{filtered: !isLoad}">
-        <mat-form-field *ngIf="isLoad && !isRange">
+        @if(isLoad && !isRange){
+        <mat-form-field>
             <mat-label>Choose a datetime</mat-label>
             <input matInput [matDatepicker]="picker" (dateChange)="dateChange($event)" [value]="currentDate" />
             <mat-hint>{{format ? format : 'MM/DD/YYYY'}}</mat-hint>
@@ -17,7 +18,8 @@
                 [dynamicTouchUI]="dynamicTouchUI"
             ></mat-datepicker>
         </mat-form-field>
-        <mat-form-field *ngIf="isLoad && isRange">
+        }@else if(isLoad && isRange){
+        <mat-form-field>
             <mat-label>Choose a datetime</mat-label>
             <mat-date-range-input matInput [rangePicker]="rangeInput">
                 <input matStartDate #dateRangeStart [(ngModel)]="rangeDate.start" />
@@ -38,10 +40,14 @@
                 [dynamicTouchUI]="dynamicTouchUI"
             ></mat-date-range-picker>
         </mat-form-field>
+        }
     </div>
-    <div class="text" *ngIf="!isRange">Current Date: {{currentDate}}</div>
-    <div class="text" *ngIf="isRange">Start Date: {{rangeDate.start}}</div>
-    <div class="text" *ngIf="isRange">End Date: {{rangeDate.end}}</div>
+    @if(!isRange){
+    <div class="text">Current Date: {{currentDate}}</div>
+    }@else {
+    <div class="text">Start Date: {{rangeDate.start}}</div>
+    <div class="text">End Date: {{rangeDate.end}}</div>
+    }
 </div>
 
 <div class="datepicker-settings-settings">
@@ -54,10 +60,10 @@
                 <mat-label>Custom format (Native sample)</mat-label>
                 <mat-select [(ngModel)]="format" (selectionChange)="reloadDatepicker()">
                     <mat-option value="">--Default--</mat-option>
-                    <mat-option value="YYYY-MM-dd HH:mm:ss">YYYY-MM-dd HH:mm:ss</mat-option>
-                    <mat-option value="dd.MM.YYYY, HH:mm:ss">dd.MM.YYYY, HH:mm:ss</mat-option>
-                    <mat-option value="MMM dd YYYY">MMM dd YYYY</mat-option>
-                    <mat-option value="shortDate">shortDate</mat-option>
+                    <mat-option value="yyyy-MM-dd HH:mm:ss">yyyy-MM-dd HH:mm:ss</mat-option>
+                    <mat-option value="dd.MM.yyyy, HH:mm:ss">dd.MM.yyyy, HH:mm:ss</mat-option>
+                    <mat-option value="MMM dd yyy">MMM dd yyyy</mat-option>
+                    <mat-option value="shortDate">M/d/yy</mat-option>
                 </mat-select>
             </mat-form-field>
             <mat-form-field>

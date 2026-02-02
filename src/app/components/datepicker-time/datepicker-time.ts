@@ -1,5 +1,4 @@
-import { Component } from "@angular/core";
-import { provideNativeDateAdapter } from "@angular/material/core";
+import { ChangeDetectorRef, Component } from "@angular/core";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { UteDatepickerTime } from "projects/ngx-ute-material/datepicker-time/src/datepicker-time";
@@ -9,7 +8,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatButtonModule } from "@angular/material/button";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatCardModule } from "@angular/material/card";
-import { NgClass, NgIf } from "@angular/common";
+import { NgClass } from "@angular/common";
 
 @Component({
     templateUrl: "./datepicker-time.html",
@@ -26,10 +25,8 @@ import { NgClass, NgIf } from "@angular/common";
         MatButtonModule,
         MatCheckboxModule,
         MatCardModule,
-        NgIf,
         NgClass,
     ],
-    providers: [provideNativeDateAdapter()],
 })
 export class DatepickerTimeComponent {
     public desktopStyle: "button" | "wheel" = "button";
@@ -49,6 +46,8 @@ export class DatepickerTimeComponent {
     public isAction: boolean = false;
     public isLoad: boolean = true;
 
+    constructor(private readonly cdf: ChangeDetectorRef) {}
+
     public dateChange(event: any) {
         this.currentDate = new Date(event.value);
     }
@@ -62,6 +61,13 @@ export class DatepickerTimeComponent {
         this.isLoad = false;
         setTimeout(() => {
             this.isLoad = true;
+            setTimeout(() => {
+                this.cdf.detectChanges();
+            }, 0);
         }, 250);
+    }
+
+    protected onUpdate() {
+        this.cdf.detectChanges();
     }
 }

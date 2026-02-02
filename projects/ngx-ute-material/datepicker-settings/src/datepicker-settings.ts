@@ -30,7 +30,6 @@ export class UteDatepickerSettings implements OnInit {
     @Output() public dateSelected: EventEmitter<void> = new EventEmitter<void>();
 
     private nativeDateAdapter: NativeDateAdapter = new NativeDateAdapter();
-    private isMoment: boolean = false;
     private copyCurrentAdapter: any;
     private matDatepicker: any = null;
     private isRange: boolean = false;
@@ -47,8 +46,6 @@ export class UteDatepickerSettings implements OnInit {
                 throw "Datepicker not found!";
             }
         }
-
-        this.isMoment = (this.dateAdapter as any).useUtcForDisplay === undefined ? true : false;
     }
 
     ngOnInit(): void {
@@ -97,18 +94,17 @@ export class UteDatepickerSettings implements OnInit {
                 this.subscriptions.add(
                     this.matDatepicker._componentRef.changeDetectorRef.context._model.selectionChanged.subscribe((event: any) => {
                         this.dateSelected.emit(event.selection);
-                    })
+                    }),
                 );
-            })
+            }),
         );
 
         // Restore default values
         this.subscriptions.add(
             this.matDatepicker.closedStream.subscribe(() => {
                 this.dateAdapter.getFirstDayOfWeek = () => this.nativeDateAdapter.getFirstDayOfWeek();
-                this.dateAdapter.getDayOfWeekNames = () =>
-                    this.isMoment ? this.nativeDateAdapter.getDayOfWeekNames("long").map((nr: string) => nr.slice(0, 2)) : this.nativeDateAdapter.getDayOfWeekNames("narrow");
-            })
+                this.dateAdapter.getDayOfWeekNames = () => this.nativeDateAdapter.getDayOfWeekNames("narrow");
+            }),
         );
 
         // Check date string
@@ -127,44 +123,32 @@ export class UteDatepickerSettings implements OnInit {
                         }
                     }
                 }
-            })
+            }),
         );
 
-        if (this.isMoment) {
-            UteDateFormat.display.dateInput = UteDateFormat.display.dateInput = this.format || "LL";
-            this.matDatepicker.datepickerInput._dateFormats = UteDateFormat;
-
-            this.subscriptions.add(
-                this.matDatepicker.openedStream.subscribe(() => {
-                    UteDateFormat.display.dateInput = UteDateFormat.display.dateInput = this.format || "LL";
-                    this.matDatepicker.datepickerInput._dateFormats = UteDateFormat;
-                })
-            );
-        } else {
-            if (this.format) {
-                const dubAdapter = duplicateInstance(this.dateAdapter);
-                dubAdapter.locale = "uk-UA";
-                dubAdapter.format = (date: Date, displayFormat: Object) => {
-                    if (this.format) {
-                        if (displayFormat === "input") {
-                            return formatDate(date, this.format, (this.dateAdapter as any).locale);
-                        } else {
-                            return this.nativeDateAdapter.format(date, displayFormat);
-                        }
+        if (this.format) {
+            const dubAdapter = duplicateInstance(this.dateAdapter);
+            dubAdapter.locale = "uk-UA";
+            dubAdapter.format = (date: Date, displayFormat: Object) => {
+                if (this.format) {
+                    if (displayFormat === "input") {
+                        return formatDate(date, this.format, (this.dateAdapter as any).locale);
                     } else {
                         return this.nativeDateAdapter.format(date, displayFormat);
                     }
-                };
-
-                this.matDatepicker.datepickerInput._dateAdapter = dubAdapter;
-                if (this.isRange) {
-                    this.matDatepicker.datepickerInput._startInput._dateAdapter = dubAdapter;
-                    this.matDatepicker.datepickerInput._startInput._dateFormats = UteDateFormat;
-                    this.matDatepicker.datepickerInput._endInput._dateAdapter = dubAdapter;
-                    this.matDatepicker.datepickerInput._endInput._dateFormats = UteDateFormat;
                 } else {
-                    this.matDatepicker.datepickerInput._dateFormats = UteDateFormat;
+                    return this.nativeDateAdapter.format(date, displayFormat);
                 }
+            };
+
+            this.matDatepicker.datepickerInput._dateAdapter = dubAdapter;
+            if (this.isRange) {
+                this.matDatepicker.datepickerInput._startInput._dateAdapter = dubAdapter;
+                this.matDatepicker.datepickerInput._startInput._dateFormats = UteDateFormat;
+                this.matDatepicker.datepickerInput._endInput._dateAdapter = dubAdapter;
+                this.matDatepicker.datepickerInput._endInput._dateFormats = UteDateFormat;
+            } else {
+                this.matDatepicker.datepickerInput._dateFormats = UteDateFormat;
             }
         }
 
@@ -182,7 +166,7 @@ export class UteDatepickerSettings implements OnInit {
     /**
      * Datect window resize
      */
-    @HostListener("window:resize", ["$event"])
+    @HostListener("window:resize")
     onResize() {
         this.mobileAdopt();
     }
@@ -205,13 +189,13 @@ export class UteDatepickerSettings implements OnInit {
         if (typeof navigator === "object" && typeof navigator.userAgent === "string") {
             if (
                 /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(
-                    navigator.userAgent
+                    navigator.userAgent,
                 )
             ) {
                 return true;
             }
         }
-        if (screen.orientation.type === ("portrait-primary" || "portrait") && window.screen.width <= 920) {
+        if (screen.orientation.type === "portrait-primary" && window.screen.width <= 920) {
             return true;
         }
         return false;

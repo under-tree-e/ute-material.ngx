@@ -1,15 +1,15 @@
 import { Component, Type, inject } from "@angular/core";
-import { CdkPortalOutlet, TemplatePortal } from "@angular/cdk/portal";
+import { TemplatePortal } from "@angular/cdk/portal";
 import { ActivatedRoute } from "@angular/router";
 import { PageItem } from "src/app/shared/page-manager/page-manager";
-import { AsyncPipe, NgComponentOutlet } from "@angular/common";
+import { NgComponentOutlet } from "@angular/common";
 import { ComponentsService } from "src/app/components/components";
 
 @Component({
     selector: "app-example",
     templateUrl: "./example.html",
     standalone: true,
-    imports: [NgComponentOutlet, AsyncPipe, CdkPortalOutlet],
+    imports: [NgComponentOutlet],
 })
 export class Example {
     public componentPortal: TemplatePortal | null = null;

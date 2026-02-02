@@ -1,4 +1,3 @@
-import { AsyncPipe, NgFor, NgIf } from "@angular/common";
 import { Component, EventEmitter, Output } from "@angular/core";
 import { MatListModule } from "@angular/material/list";
 import { RouterLink, RouterLinkActive } from "@angular/router";
@@ -16,7 +15,7 @@ import { PageManager } from "../page-manager/page-manager";
         ]),
     ],
     standalone: true,
-    imports: [NgIf, MatListModule, NgFor, RouterLinkActive, RouterLink, AsyncPipe],
+    imports: [MatListModule, RouterLinkActive, RouterLink],
 })
 export class SideBar {
     @Output() public toggleSidenav: EventEmitter<boolean> = new EventEmitter<boolean>();

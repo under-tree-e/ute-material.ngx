@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Inject, Input, OnDestroy, OnInit, NgZone, ChangeDetectorRef } from "@angular/core";
-import { DOCUMENT, NgFor } from "@angular/common";
+import { DOCUMENT } from "@angular/common";
 import { ActivatedRoute, Router } from "@angular/router";
 import { fromEvent, Subscription } from "rxjs";
 import { debounceTime } from "rxjs/operators";
@@ -31,14 +31,14 @@ interface Link {
     styleUrls: ["./table-of-contents.scss"],
     templateUrl: "./table-of-contents.html",
     standalone: true,
-    imports: [NgFor],
+    imports: [],
 })
 export class TableOfContents implements OnInit, AfterViewInit, OnDestroy {
     @Input() container: string | undefined;
 
     _linkSections: LinkSection[] = [];
     _links: Link[] = [];
-    _rootUrl = this._router.url.split("#")[0];
+    _rootUrl = "";
 
     private _scrollContainer: HTMLElement | Window | null = null;
     private _urlFragment = "";
@@ -50,8 +50,10 @@ export class TableOfContents implements OnInit, AfterViewInit, OnDestroy {
         private _element: ElementRef,
         @Inject(DOCUMENT) private _document: Document,
         private _ngZone: NgZone,
-        private _changeDetectorRef: ChangeDetectorRef
+        private _changeDetectorRef: ChangeDetectorRef,
     ) {
+        this._rootUrl = this._router.url.split("#")[0];
+
         this.subscriptions.add(
             this._route.fragment.subscribe((fragment) => {
                 if (fragment != null) {
@@ -62,7 +64,7 @@ export class TableOfContents implements OnInit, AfterViewInit, OnDestroy {
                         target.scrollIntoView();
                     }
                 }
-            })
+            }),
         );
     }
 
@@ -77,7 +79,7 @@ export class TableOfContents implements OnInit, AfterViewInit, OnDestroy {
                     this.subscriptions.add(
                         fromEvent(this._scrollContainer, "scroll")
                             .pipe(debounceTime(10))
-                            .subscribe(() => this.onScroll())
+                            .subscribe(() => this.onScroll()),
                     );
                 }
             });
