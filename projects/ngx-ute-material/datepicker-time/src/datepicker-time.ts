@@ -223,8 +223,16 @@ export class UteDatepickerTime implements OnInit {
             let dateInput: any = { year: "numeric", month: "numeric", day: "numeric", hour12: this.hourFormat === 12 ? true : false, hour: "2-digit", minute: "2-digit" };
             if (this.showSeconds) dateInput.second = "2-digit";
 
-            this.matDatepicker.datepickerInput._dateFormats.parse.dateInput = dateInput;
-            this.matDatepicker.datepickerInput._dateFormats.display.dateInput = dateInput;
+            // Clone original date formats to disable reference
+            const original = this.matDatepicker.datepickerInput._dateFormats;
+            const formats = {
+                ...original,
+                parse: { ...original.parse },
+                display: { ...original.display },
+            };
+            formats.parse.dateInput = dateInput;
+            formats.display.dateInput = dateInput;
+            this.matDatepicker.datepickerInput._dateFormats = formats;
         }
 
         if (this.matDatepicker.datepickerInput.value) {

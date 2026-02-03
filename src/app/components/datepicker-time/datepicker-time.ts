@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from "@angular/core";
+import { ChangeDetectorRef, Component, ViewChild } from "@angular/core";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { UteDatepickerTime } from "projects/ngx-ute-material/datepicker-time/src/datepicker-time";
@@ -46,7 +46,20 @@ export class DatepickerTimeComponent {
     public isAction: boolean = false;
     public isLoad: boolean = true;
 
+    @ViewChild("picker") public matDatepicker: any;
+    @ViewChild("picker1") public matDatepicker1: any;
+
     constructor(private readonly cdf: ChangeDetectorRef) {}
+
+    // For multiple datepickers test
+    // ngOnInit() {
+    //     setTimeout(() => {
+    //         console.log(this.matDatepicker.datepickerInput);
+    //         console.log(this.matDatepicker.datepickerInput._dateFormats.parse.dateInput);
+    //         console.log(this.matDatepicker1.datepickerInput);
+    //         console.log(this.matDatepicker1.datepickerInput._dateFormats.parse.dateInput);
+    //     }, 500);
+    // }
 
     public dateChange(event: any) {
         this.currentDate = new Date(event.value);

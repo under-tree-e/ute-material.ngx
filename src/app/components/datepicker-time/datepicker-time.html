@@ -33,6 +33,14 @@
                 (sac)="hourStep = 1; minuteStep = 1; secondStep = 1; onUpdate()"
             ></ute-datepicker-time>
         </mat-form-field>
+        <!-- For multiple datepickers test -->
+        <!-- <mat-form-field>
+            <mat-label>Choose a date</mat-label>
+            <input matInput [matDatepicker]="picker1" />
+            <mat-hint>MM/DD/YYYY</mat-hint>
+            <mat-datepicker-toggle matIconSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+        </mat-form-field> -->
         }
     </div>
     <div class="text">Current Date: {{currentDate}}</div>
